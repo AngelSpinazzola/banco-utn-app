@@ -1,4 +1,5 @@
 <%@ page import="entidad.TipoPrestamo"%>
+<%@ page import="entidad.Cuenta"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <!DOCTYPE html>
@@ -61,12 +62,12 @@ label+label {
 			class="d-flex flex-column justify-content-center align-items-center vh-100">
 			<div class="contenedor-principal p-4 bg-light border rounded">
 				<div class="form-group">
-					<label for="monto">Monto</label> <input type="text"
-						class="form-control" id="monto" placeholder="$10000.00">
+					<label for="monto">Monto</label> 
+					<input type="text" class="form-control" name="monto" placeholder="$10000.00">
 				</div>
 				<div class="form-group">
 					<label for="tipo-prestamo" class="form-label">Tipo de préstamo</label>
-					<select name="tipo-prestamo" class="form-select" id="tipo-prestamo">
+					<select class="form-select" name="idTipoPrestamo">
 						<%
 							ArrayList<TipoPrestamo> listaTipoPrestamos = (ArrayList<TipoPrestamo>) request.getAttribute("listaTipoPrestamos");
 							for (TipoPrestamo tipoPrestamo : listaTipoPrestamos) {
@@ -78,19 +79,25 @@ label+label {
 					</select>
 				</div>
 				<div class="form-group">
-					<label for="plazo-cuotas">Plazo en cuotas</label> <select
-						class="form-control" id="plazo-cuotas">
+					<label for="plazo-cuotas" class="form-label">Plazo en cuotas</label> 
+					<select class="form-select" id="plazo-cuotas" name="plazo">
+						<option value="6">6 meses</option>
 						<option value="12">12 meses</option>
 						<option value="24">24 meses</option>
 						<option value="36">36 meses</option>
 					</select>
 				</div>
 				<div class="form-group">
-					<label for="cuenta-acreditacion">Cuenta para acreditación</label> <select
-						class="form-control" id="cuenta-acreditacion">
-						<option value="cuenta1">Cuenta 1</option>
-						<option value="cuenta2">Cuenta 2</option>
-						<option value="cuenta3">Cuenta 3</option>
+					<label for="cuentas" class="form-label">Seleccioná la cuenta en la que deseas recibir el dinero</label>
+					<select class="form-select" name="idCuenta">
+						<%
+							ArrayList<Cuenta> listaCuentas = (ArrayList<Cuenta>) request.getAttribute("listaCuentas");
+							for (Cuenta cuenta : listaCuentas) {
+						%>
+						<option value="<%= cuenta.getIdCuenta() %>">N° Cuenta <%= cuenta.getNumeroCuenta() + " - " + cuenta.getTipoCuenta().getTipo() %></option>
+						<%
+							}
+						%>
 					</select>
 				</div>
 				<div class="resumen-prestamo">
@@ -110,64 +117,25 @@ label+label {
 			<!-- Botones fuera del contenedor -->
 			<div class="btn-seccion contenedor-principal">
 				<a href="ClientePanelSv" class="btn btn-secondary">Cancelar</a>
-				<button type="button" class="btn btn-primary" onclick="solicitar()">Solicitar</button>
+				<button type="submit" class="btn btn-primary">Solicitar</button>
 			</div>
 		</div>
 	</form>
 
 	<script>
-	const montoInput = document.getElementById('monto');
-	const tipoPrestamo = document.getElementById('tipo-prestamo');
-	const plazoCuotas = document.getElementById('plazo-cuotas');
-	const montoSolicitado = document.getElementById('monto-solicitado');
-	const plazo = document.getElementById('plazo');
-	const cuotaMensual = document.getElementById('cuota-mensual');
-	const tipoPrestamoResumen = document.createElement('p'); // Crear un nuevo elemento para el tipo de préstamo
-
-	// Agregar el tipo de préstamo al resumen
-	tipoPrestamoResumen.id = "tipo-prestamo-resumen";
-	document.querySelector(".resumen-prestamo").appendChild(tipoPrestamoResumen);
-
-	function calcularCuotaMensualFija(monto, plazoMeses, tasaInteres) {
-		  const montoTotal = monto + (monto * tasaInteres); // Calcular monto total con interés
-		  return montoTotal / plazoMeses; // Dividir entre el número de cuotas
-		}
-
-	function obtenerTasaInteres() {
-	  const tipo = tipoPrestamo.options[tipoPrestamo.selectedIndex]?.text; // Obtener el texto del tipo seleccionado
-	  switch (tipo) {
-	    case 'Personal': return 0.25;
-	    case 'Hipotecario': return 0.05;
-	    case 'Automotriz': return 0.10;
-	    case 'Vacaciones': return 0.15;
-	    case 'Comercial': return 0.20;
-	    case 'Agrícola': return 0.18;
-	    default: return 0; // Tasa de interés por defecto si no hay tipo seleccionado
-	  }
-	}
-
-	function actualizarResumen() {
-		  const monto = parseFloat(montoInput.value.replace(/[^\d.]/g, '')) || 0; // Convertir el monto a número
-		  const plazoMeses = parseInt(plazoCuotas.value) || 0;
-		  const tasaInteres = obtenerTasaInteres();
-		  const cuotaMensualCalc = calcularCuotaMensualFija(monto, plazoMeses, tasaInteres);
-
-		  // Actualizar el resumen con los valores calculados
-		  montoSolicitado.textContent = monto.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-		  plazo.textContent = plazoMeses;
-		  cuotaMensual.textContent = cuotaMensualCalc.toLocaleString('en-US', { style: 'currency', currency: 'USD' });
-
-		  // Mostrar el tipo de préstamo seleccionado
-		  const tipo = tipoPrestamo.options[tipoPrestamo.selectedIndex]?.text || 'No seleccionado';
-		  tipoPrestamoResumen.textContent = `Tipo de préstamo: ${tipo}`;
-		}
-
-	// Actualizar el resumen al cambiar los valores
-	montoInput.addEventListener('input', actualizarResumen);
-	tipoPrestamo.addEventListener('change', actualizarResumen);
-	plazoCuotas.addEventListener('change', actualizarResumen);
-
-	</script>
+       // Verificar si hay un mensaje de error
+       <% 
+       String errorMonto = (String) request.getAttribute("errorMonto");
+       if (errorMonto != null && !errorMonto.isEmpty()) { 
+       %>
+           Swal.fire({
+               icon: 'error',
+               title: 'Error',
+               text: '<%= errorMonto %>',
+               confirmButtonText: 'Aceptar'
+           });
+       <% } %>
+   </script>
 </body>
 </html>
 

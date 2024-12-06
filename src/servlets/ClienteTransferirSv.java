@@ -71,14 +71,12 @@ public class ClienteTransferirSv extends HttpServlet {
 
 	    // Si la transferencia es válida, se realiza
 	    if (resultado == 0) {
-	        //iCuentaNegocio.realizarTransferencia(cbuOrigen, cbuDestino, monto);
-	        //request.setAttribute("successTransferencia", "Transferencia realizada con éxito.");
 	    	request.setAttribute("cbuOrigen", cbuOrigen);
 	        request.setAttribute("cbuDestino", cbuDestino);
 	        request.setAttribute("monto", monto);
 	        RequestDispatcher dispatcher = request.getRequestDispatcher("/ClienteConfirmarTransferencia.jsp");
 	        dispatcher.forward(request, response);
-	        return; // Asegúrate de detener la ejecución posterior.
+	        return; 
 	    }
 
 	    RequestDispatcher dispatcher = request.getRequestDispatcher("/ClienteTransferir.jsp");
