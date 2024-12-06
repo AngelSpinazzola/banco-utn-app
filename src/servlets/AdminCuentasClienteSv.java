@@ -29,12 +29,10 @@ public class AdminCuentasClienteSv extends HttpServlet {
 	private IPrestamoNegocio iPrestamoNegocio = new PrestamoNegocioImpl();
 	private ICuentaNegocio iCuentaNegocio = new CuentaNegocioImpl();
        
-
     public AdminCuentasClienteSv() {
         super();
     }
-
-
+    
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		Cliente cliente = iClienteNegocio.getDetalleCliente(Integer.parseInt(request.getParameter("idCliente")));
 		
@@ -50,10 +48,8 @@ public class AdminCuentasClienteSv extends HttpServlet {
 	    dispatcher.forward(request, response);
 	}
 
-
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
 		String action = request.getParameter("action");
-		System.out.println("ACCION RECIBIDA EN EL DOPOST:" + action);
 
         try {
             if ("modificarSaldo".equals(action)) {
