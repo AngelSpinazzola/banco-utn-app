@@ -5,7 +5,10 @@
         <dependent-module archiveName="mysql-connector-java-5.1.47-bin.jar" deploy-path="/WEB-INF/lib" handle="module:/classpath/lib/C:/Users/Angel/Documents/Angel/UTN/2024 2C/Lab 4/mysql-connector-java-5.1.47/mysql-connector-java-5.1.47-bin.jar">
             <dependency-type>uses</dependency-type>
         </dependent-module>
-        <property name="context-root" value="TP_BANCO_GRUPO20_LAB4"/>
+        <dependent-module archiveName="rt.jar" deploy-path="/" handle="module:/classpath/var/JRE_LIB">
+            <dependency-type>uses</dependency-type>
+        </dependent-module>
         <property name="java-output-path" value="/TP_BANCO_GRUPO20_LAB4/build/classes"/>
+        <property name="context-root" value="TP_BANCO_GRUPO20_LAB4"/>
     </wb-module>
 </project-modules>
