@@ -102,15 +102,10 @@ label+label {
 				</div>
 				<div class="resumen-prestamo">
 					<label>Resumen del préstamo</label>
-					<p>
-						Monto solicitado: <span id="monto-solicitado"></span>
-					</p>
-					<p>
-						Plazo: <span id="plazo"></span> cuotas
-					</p>
-					<p>
-						Cuota mensual con interés: <span id="cuota-mensual"></span>
-					</p>
+					<p>	Monto solicitado: <span id="monto-solicitado"></span></p>
+					<p>Plazo: <span id="plazo"></span> cuotas</p>
+					<p>Cuota mensual con interés: <span id="cuota-mensual"></span></p>
+					<p>Tipo de préstamo: <span id="tipo-prestamo"></span></p>
 				</div>
 			</div>
 
@@ -135,6 +130,26 @@ label+label {
                confirmButtonText: 'Aceptar'
            });
        <% } %>
+       
+    // Calcular el resumen del préstamo
+       document.addEventListener("DOMContentLoaded", function() {
+           var monto = parseFloat(document.querySelector("input[name='monto']").value);
+           var plazo = parseInt(document.querySelector("select[name='plazo']").value);
+           var idTipoPrestamo = parseInt(document.querySelector("select[name='idTipoPrestamo']").value);
+           
+           var tipoPrestamo = listaTipoPrestamos.find(function(tp) {
+               return tp.getIdTipoPrestamo() === idTipoPrestamo;
+           });
+           
+           var tna = tipoPrestamo.getTna(); // Tasa Nominal Anual
+           
+           var cuotaMensual = monto * (tna / 100) / 12 / plazo + monto / plazo;
+           
+           document.getElementById("monto-solicitado").innerText = "$" + monto.toFixed(2);
+           document.getElementById("plazo").innerText = plazo + " cuotas";
+           document.getElementById("cuota-mensual").innerText = "$" + cuotaMensual.toFixed(2);
+           document.getElementById("tipo-prestamo").innerText = tipoPrestamo.getNombreTipoPrestamo() + " - " + tna + "% TNA";
+       });
    </script>
 </body>
 </html>
