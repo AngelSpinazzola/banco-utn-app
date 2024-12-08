@@ -401,17 +401,14 @@ th {
 							Anterior </a>
 					</li>
 
-					// Determinar el rango de páginas a mostrar
 					<%
 					int startPage = Math.max(1, paginaActual - 1);
 					int endPage = Math.min(totalPaginas, startPage + 2);
 
-					// Ajustar rango para garantizar 3 botones
 					if (endPage - startPage < 2) {
 						startPage = Math.max(1, endPage - 2);
 					}
 
-					// Botón de primera página si no está en el rango inicial
 					if (startPage > 1) { 
 					%>
 						<li class="page-item"><a class="page-link"
@@ -433,7 +430,6 @@ th {
 					<%
 						}
 
-				    // Botón de última página si no está en el rango final
 					if (endPage < totalPaginas) {
 					%>
 					<li class="page-item disabled"><span class="page-link">...</span>
@@ -446,7 +442,6 @@ th {
 						}
 					%>
 
-					<!-- Botón Siguiente -->
 					<li
 						class="page-item <%=paginaActual == totalPaginas ? "disabled" : ""%>">
 						<a class="page-link"

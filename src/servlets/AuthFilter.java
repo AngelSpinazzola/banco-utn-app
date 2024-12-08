@@ -58,7 +58,7 @@ public class AuthFilter implements Filter {
 
 		// Verifica el acceso a páginas de cliente
 		if ((uri.contains("ClientePanel.jsp") || uri.contains("ClienteDatos.jsp")
-				|| uri.contains("ClienteMovimientos.jsp") || uri.contains("ClienteTransferir.jsp")
+				|| uri.contains("ClienteMovimientos.jsp") || uri.contains("ClienteSolicitarPrestamo.jsp") || uri.contains("ClienteTransferir.jsp")
 				|| uri.contains("MisPrestamos.jsp") || uri.contains("PagarCuotas.jsp") || uri.contains("Prestamos.jsp"))
 				&& usuario.getTipo().codigo != 2) {
 			session.setAttribute("errorMsj", "Acceso no autorizado. Solo clientes pueden acceder a esta página.");

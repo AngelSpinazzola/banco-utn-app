@@ -1,8 +1,10 @@
 package daoImpl;
 
+import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 import java.util.ArrayList;
 import dao.IPrestamoDao;
 import entidad.Prestamo;
@@ -45,8 +47,8 @@ public class PrestamoDaoImpl implements IPrestamoDao {
 				TipoPrestamo tipoPrestamo = new TipoPrestamo();
 				
 				prestamo.setIdPrestamo(rs.getInt("idPrestamo"));
-				prestamo.setMontoAPagar(rs.getFloat("importeAPagar"));
-				prestamo.setMontoPedido(rs.getFloat("montoPedido"));
+				prestamo.setMontoAPagar(rs.getBigDecimal("importeAPagar"));
+				prestamo.setMontoPedido(rs.getBigDecimal("montoPedido"));
 				prestamo.setCuotas(rs.getInt("cuotas"));
 				prestamo.setFecha(rs.getDate("fecha"));
 				prestamo.setEstado(rs.getInt("estado"));
@@ -120,6 +122,31 @@ public class PrestamoDaoImpl implements IPrestamoDao {
 		}
 		return totalPrestamos;
 	}
+	
+	@Override
+	public boolean solicitarPrestamo(Prestamo prestamo, int idCuenta) {
+	    boolean resultado = false;
 
+	    try (Connection conexion = Conexion.getConnection()) {
+	        try (CallableStatement stmt = conexion.prepareCall("{CALL InsertarPrestamo(?, ?, ?, ?, ?)}")) {
+	            stmt.setInt(1, prestamo.getTipoPrestamo().getIdTipoPrestamo());
+	            stmt.setInt(2, idCuenta);
+	            stmt.setBigDecimal(3, prestamo.getMontoPedido());
+	            stmt.setInt(4, prestamo.getCuotas());
+
+	            stmt.registerOutParameter(5, java.sql.Types.BOOLEAN); 
+
+	            stmt.executeUpdate();
+
+	            resultado = stmt.getBoolean(5);  
+	        } catch (SQLException e) {
+	            e.printStackTrace();
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return resultado;
+	}
 
 }

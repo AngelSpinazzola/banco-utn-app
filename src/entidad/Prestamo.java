@@ -1,12 +1,13 @@
 package entidad;
 
+import java.math.BigDecimal;
 import java.sql.Date;
 
 public class Prestamo{
 	private int idPrestamo;
 	private int dniCliente;
-	private float montoPedido;
-	private float montoAPagar;
+	private BigDecimal montoPedido;
+	private BigDecimal montoAPagar;
 	private int cuotas;
 	private Date fecha;
 	TipoPrestamo tipoPrestamo;
@@ -16,7 +17,7 @@ public class Prestamo{
 		super();
 	}
 
-	public Prestamo(int idPrestamo, int dniCliente, float montoPedido, float montoAPagar, int cuotas, Date fecha, int estado) {
+	public Prestamo(int idPrestamo, int dniCliente, BigDecimal montoPedido, BigDecimal montoAPagar, int cuotas, Date fecha, int estado) {
 		super();
 		this.idPrestamo = idPrestamo;
 		this.dniCliente = dniCliente;
@@ -51,19 +52,19 @@ public class Prestamo{
 		this.dniCliente = dniCliente;
 	}
 
-	public float getMontoPedido() {
+	public BigDecimal getMontoPedido() {
 		return montoPedido;
 	}
 
-	public void setMontoPedido(float montoPedido) {
+	public void setMontoPedido(BigDecimal montoPedido) {
 		this.montoPedido = montoPedido;
 	}
 
-	public float getMontoAPagar() {
+	public BigDecimal getMontoAPagar() {
 		return montoAPagar;
 	}
 
-	public void setMontoAPagar(float montoAPagar) {
+	public void setMontoAPagar(BigDecimal montoAPagar) {
 		this.montoAPagar = montoAPagar;
 	}
 

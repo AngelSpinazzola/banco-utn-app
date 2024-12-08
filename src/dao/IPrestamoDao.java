@@ -8,4 +8,5 @@ public interface IPrestamoDao {
 	public int getTotalPrestamosCount(int idCliente);
 	public int calcularTotalPaginas(int idCliente, int pageSize);
 	public int getPrestamosPorCuenta(int idCuenta);
+	public boolean solicitarPrestamo(Prestamo prestamo, int idCuenta);
 }

@@ -3,6 +3,7 @@ package negocioImpl;
 import java.util.ArrayList;
 import dao.IPrestamoDao;
 import daoImpl.PrestamoDaoImpl;
+import entidad.Cuenta;
 import entidad.Prestamo;
 import negocio.IPrestamoNegocio;
 
@@ -60,9 +61,20 @@ public class PrestamoNegocioImpl implements IPrestamoNegocio{
 	    if (monto.chars().filter(ch -> ch == '.').count() > 1) {
 	        return -6;  
 	    }
+	    
+	    double montoNumerico = Double.parseDouble(monto.replace(",", ""));
+	    if (montoNumerico < 10000 || montoNumerico > 100000000) {
+	        return -7;  // El monto debe estar entre 10,000 y 100,000,000
+	    }
 
 	    return 0; // Monto válido
 	}
-
+	
+	@Override
+	public boolean solicitarPrestamo(Prestamo prestamo, int idCuenta) {
+		boolean resultado = iPrestamoDao.solicitarPrestamo(prestamo, idCuenta);
+		
+		return resultado;
+	}
 
 }

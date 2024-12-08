@@ -100,7 +100,7 @@ CREATE TABLE PRESTAMOS (
     ImporteAPagar DECIMAL(10,2) NOT NULL,
     Cuotas INT NOT NULL,
     Fecha DATE NOT NULL,
-    Estado TINYINT NOT NULL,
+    Estado TINYINT NOT NULL DEFAULT 0, -- 0 pendiente, 1 aprobado, 2 rechazado
 	CONSTRAINT fk_PrestamoId FOREIGN KEY (IDTipoPrestamo) REFERENCES TIPO_PRESTAMOS(IDTipoPrestamo),
     CONSTRAINT fk_CuentaId FOREIGN KEY (IDCuenta) REFERENCES CUENTAS(IDCuenta),
     CONSTRAINT chk_Monto CHECK (MontoPedido REGEXP '^[0-9]+(\\.[0-9]{1,2})?$'),
@@ -139,7 +139,7 @@ CREATE TABLE MOVIMIENTOS (
     DetalleDestino VARCHAR(100) NOT NULL,
     Importe DECIMAL(18,2) NOT NULL,
     IDCuentaEmisor INT,
-    IDCuentaReceptor INT,
+    IDCuentaReceptor INT, 
     IDTipoMovimiento INT NOT NULL,
     CONSTRAINT fk_Movimientos_Tipo_Movimientos FOREIGN KEY (IDTipoMovimiento) REFERENCES TIPO_MOVIMIENTOS(IDTipoMovimiento),
     CONSTRAINT chk_Importe CHECK (Importe REGEXP '^[0-9]+(\\.[0-9]{1,2})?$')
@@ -517,8 +517,34 @@ END $$
 
 DELIMITER ;
 
+-- Procedure para solicitar un préstamo
+DELIMITER $$
 
+CREATE PROCEDURE InsertarPrestamo (
+    IN idTipoPrestamo INT,
+    IN idCuenta INT,
+    IN monto DECIMAL(10,2),
+    IN cuotas INT,
+    OUT estado BOOLEAN
+)
+BEGIN
+    DECLARE tasaAnual DECIMAL(10,2);
+    DECLARE montoAPagar DECIMAL(10,2);
 
+    SELECT TNA INTO tasaAnual
+    FROM TIPO_PRESTAMOS
+    WHERE IDTipoPrestamo = idTipoPrestamo
+    LIMIT 1;
+
+    SET montoAPagar = monto * (1 + tasaAnual / 100);
+	
+    INSERT INTO PRESTAMOS (IDTipoPrestamo, IDCuenta, MontoPedido, ImporteAPagar, Cuotas, Fecha)
+    VALUES (idTipoPrestamo, idCuenta, monto, montoAPagar, cuotas, CURDATE()); 
+	
+    SET estado = ROW_COUNT() = 1;
+END $$
+
+DELIMITER ;
 
 -- Inserts para la tabla NACIONALIDADES
 INSERT INTO NACIONALIDADES (Nacionalidad) 
@@ -709,27 +735,27 @@ VALUES
 ('Agrícola', 18); -- TNA 10%
 
 -- Inserts para préstamos
-INSERT INTO PRESTAMOS (IDTipoPrestamo, IDCuenta, MontoPedido, ImporteAPagar, Cuotas, Fecha, Estado) 
+INSERT INTO PRESTAMOS (IDTipoPrestamo, IDCuenta, MontoPedido, ImporteAPagar, Cuotas, Fecha) 
 VALUES 
-(2, 1, 20000.00, 22000.00, 12, '2023-06-06', 0),   
-(3, 1, 15000.00, 17250.00, 24, '2022-02-05', 0),   
-(2, 1, 20000.00, 22000.00, 18, '2022-03-01', 0),   
-(2, 2, 25000.00, 27500.00, 36, '2022-04-04', 0),   
-(2, 2, 30000.00, 33000.00, 12, '2023-02-03', 0),   
-(1, 2, 35000.00, 43750.00, 24, '2023-02-01', 0),  
-(1, 3, 40000.00, 50000.00, 18, '2022-05-07', 0),  
-(4, 4, 45000.00, 54000.00, 36, '2023-08-01', 0),  
-(5, 5, 50000.00, 52500.00, 12, '2023-09-08', 0),  
-(1, 7, 55000.00, 68750.00, 24, '2023-10-01', 0), 
-(1, 7, 35000.00, 43750.00, 24, '2023-02-01', 0),  
-(1, 8, 40000.00, 50000.00, 18, '2022-05-07', 0),   
-(4, 8, 45000.00, 54000.00, 36, '2023-08-01', 0),   
-(5, 13, 50000.00, 52500.00, 12, '2023-09-08', 0),   
-(1, 13, 55000.00, 68750.00, 24, '2023-10-01', 0),
-(3, 10, 45000.00, 56250.00, 24, '2022-02-05', 0),   
-(2, 10, 30000.00, 58000.00, 18, '2022-03-01', 0),
-(5, 2, 50000.00, 52500.00, 12, '2023-09-11', 2),   
-(1, 2, 55000.00, 68750.00, 24, '2023-10-13', 1),
-(3, 2, 45000.00, 56250.00, 24, '2022-02-14', 2),   
-(2, 2, 30000.00, 58000.00, 18, '2022-03-15', 0); 
+(2, 1, 20000.00, 22000.00, 12, '2023-06-06'),   
+(3, 1, 15000.00, 17250.00, 24, '2022-02-05'),   
+(2, 1, 20000.00, 22000.00, 18, '2022-03-01'),   
+(2, 2, 25000.00, 27500.00, 36, '2022-04-04'),   
+(2, 2, 30000.00, 33000.00, 12, '2023-02-03'),   
+(1, 2, 35000.00, 43750.00, 24, '2023-02-01'),  
+(1, 3, 40000.00, 50000.00, 18, '2022-05-07'),  
+(4, 4, 45000.00, 54000.00, 36, '2023-08-01'),  
+(5, 5, 50000.00, 52500.00, 12, '2023-09-08'),  
+(1, 7, 55000.00, 68750.00, 24, '2023-10-01'), 
+(1, 7, 35000.00, 43750.00, 24, '2023-02-01'),  
+(1, 8, 40000.00, 50000.00, 18, '2022-05-07'),   
+(4, 8, 45000.00, 54000.00, 36, '2023-08-01'),   
+(5, 13, 50000.00, 52500.00, 12, '2023-09-08'),   
+(1, 13, 55000.00, 68750.00, 24, '2023-10-01'),
+(3, 10, 45000.00, 56250.00, 24, '2022-02-05'),   
+(2, 10, 30000.00, 58000.00, 18, '2022-03-01'),
+(5, 2, 50000.00, 52500.00, 12, '2023-09-11'),   
+(1, 2, 55000.00, 68750.00, 24, '2023-10-13'),
+(3, 2, 45000.00, 56250.00, 24, '2022-02-14'),   
+(2, 2, 30000.00, 58000.00, 18, '2022-03-15'); 
 

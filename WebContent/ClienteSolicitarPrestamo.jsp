@@ -58,13 +58,17 @@ label+label {
 
 	<jsp:include page="Componentes/Navbar.jsp"></jsp:include>
 	<form action="ClienteSolicitudPrestamoSv" method="post">
-		<div
-			class="d-flex flex-column justify-content-center align-items-center vh-100">
+		
+		<div class="d-flex flex-column justify-content-center align-items-center vh-100">
 			<div class="contenedor-principal p-4 bg-light border rounded">
-				<div class="form-group">
-					<label for="monto">Monto</label> 
-					<input type="text" class="form-control" name="monto" placeholder="$10000.00">
-				</div>
+				  <div class="form-group">
+                    <label for="monto">Monto</label> 
+                    <input type="range" class="form-range" id="monto-slider" name="monto" min="10000" max="25000000" step="10000" value="10000">
+                    <small style="font-size: 0.9em; color: gray; display: block;">
+                        Podés solicitar desde $10.000 hasta $25.000.000
+                    </small>
+                    <p id="monto-display"></p>
+                </div>
 				<div class="form-group">
 					<label for="tipo-prestamo" class="form-label">Tipo de préstamo</label>
 					<select class="form-select" name="idTipoPrestamo">
@@ -92,24 +96,26 @@ label+label {
 					<select class="form-select" name="idCuenta">
 						<%
 							ArrayList<Cuenta> listaCuentas = (ArrayList<Cuenta>) request.getAttribute("listaCuentas");
-							for (Cuenta cuenta : listaCuentas) {
+							if (listaCuentas != null && !listaCuentas.isEmpty()) {
+								for (Cuenta cuenta : listaCuentas) {
 						%>
 						<option value="<%= cuenta.getIdCuenta() %>">N° Cuenta <%= cuenta.getNumeroCuenta() + " - " + cuenta.getTipoCuenta().getTipo() %></option>
-						<%
-							}
-						%>
+						<%      }
+            				} else {
+        				%>
+				        <option value="">No hay cuentas disponibles</option>
+				        <% } %>
 					</select>
 				</div>
 				<div class="resumen-prestamo">
 					<label>Resumen del préstamo</label>
 					<p>	Monto solicitado: <span id="monto-solicitado"></span></p>
-					<p>Plazo: <span id="plazo"></span> cuotas</p>
+					<p>Plazo: <span id="plazo"></span></p>
 					<p>Cuota mensual con interés: <span id="cuota-mensual"></span></p>
 					<p>Tipo de préstamo: <span id="tipo-prestamo"></span></p>
 				</div>
 			</div>
 
-			<!-- Botones fuera del contenedor -->
 			<div class="btn-seccion contenedor-principal">
 				<a href="ClientePanelSv" class="btn btn-secondary">Cancelar</a>
 				<button type="submit" class="btn btn-primary">Solicitar</button>
@@ -118,39 +124,89 @@ label+label {
 	</form>
 
 	<script>
-       // Verificar si hay un mensaje de error
-       <% 
-       String errorMonto = (String) request.getAttribute("errorMonto");
-       if (errorMonto != null && !errorMonto.isEmpty()) { 
-       %>
-           Swal.fire({
-               icon: 'error',
-               title: 'Error',
-               text: '<%= errorMonto %>',
-               confirmButtonText: 'Aceptar'
-           });
-       <% } %>
-       
-    // Calcular el resumen del préstamo
-       document.addEventListener("DOMContentLoaded", function() {
-           var monto = parseFloat(document.querySelector("input[name='monto']").value);
-           var plazo = parseInt(document.querySelector("select[name='plazo']").value);
-           var idTipoPrestamo = parseInt(document.querySelector("select[name='idTipoPrestamo']").value);
-           
-           var tipoPrestamo = listaTipoPrestamos.find(function(tp) {
-               return tp.getIdTipoPrestamo() === idTipoPrestamo;
-           });
-           
-           var tna = tipoPrestamo.getTna(); // Tasa Nominal Anual
-           
-           var cuotaMensual = monto * (tna / 100) / 12 / plazo + monto / plazo;
-           
-           document.getElementById("monto-solicitado").innerText = "$" + monto.toFixed(2);
-           document.getElementById("plazo").innerText = plazo + " cuotas";
-           document.getElementById("cuota-mensual").innerText = "$" + cuotaMensual.toFixed(2);
-           document.getElementById("tipo-prestamo").innerText = tipoPrestamo.getNombreTipoPrestamo() + " - " + tna + "% TNA";
-       });
-   </script>
+	    function calcularCuotaMensual(monto, plazo, tasaAnual) {
+	    	monto = monto.replace(/[^\d.]/g, ''); 
+	        
+	        const montoNumerico = parseFloat(monto) || 0;
+	        const plazoNumerico = parseInt(plazo) || 1;
+	        
+	        const tasaInteres = tasaAnual / 100; 
+	        const montoTotal = montoNumerico * (1 + tasaInteres);
+	        const cuota = montoTotal / plazoNumerico;
+	
+	        return cuota.toFixed(2);
+	    }
+	
+	    function actualizarResumen() {
+	        const montoInput = document.querySelector('input[name="monto"]');
+	        const tipoPrestamo = document.querySelector('select[name="idTipoPrestamo"]');
+	        const plazoSelect = document.querySelector('select[name="plazo"]');
+	
+	        const monto = montoInput.value || '$0';
+	        const plazo = plazoSelect.value;
+	        const montoNumerico = parseFloat(monto.replace(/[^\d.]/g, '')) || 0;
+
+	        const selectedTipoPrestamo = tipoPrestamo.options[tipoPrestamo.selectedIndex];
+	        const tipoPrestamoText = selectedTipoPrestamo.text;
+	        const tipoPrestamoId = selectedTipoPrestamo.value;
+	
+	        const tnaPorTipoPrestamo = {
+	            <% 
+	            for (int i = 0; i < listaTipoPrestamos.size(); i++) { 
+	                TipoPrestamo tp = listaTipoPrestamos.get(i);
+	            %>
+	                <%= tp.getIdTipoPrestamo() %>: <%= tp.getTna() %><%= i < listaTipoPrestamos.size() - 1 ? "," : "" %>
+	            <% } %>
+	        };
+	
+	        const tna = tnaPorTipoPrestamo[tipoPrestamoId];
+	
+	        document.getElementById('monto-solicitado').textContent = '$' + monto;
+	        document.getElementById('plazo').textContent = plazo + ' cuotas';
+	        document.getElementById('tipo-prestamo').textContent = tipoPrestamoText + ' - ' + tna + '% TNA';
+	        
+	        const cuotaMensual = calcularCuotaMensual(monto, plazo, tna);
+	        document.getElementById('cuota-mensual').textContent = '$' + cuotaMensual;
+	    }
+	
+	    document.querySelector('input[name="monto"]').addEventListener('input', actualizarResumen);
+	    document.querySelector('select[name="idTipoPrestamo"]').addEventListener('change', actualizarResumen);
+	    document.querySelector('select[name="plazo"]').addEventListener('change', actualizarResumen);
+	
+	    document.addEventListener('DOMContentLoaded', actualizarResumen);
+	    
+	    <% 
+	    String errorPrestamo = (String) request.getAttribute("errorPrestamo");
+	    if (errorPrestamo != null && !errorPrestamo.isEmpty()) { 
+		%>
+		    Swal.fire({
+		        icon: 'error', 
+		        title: 'Error',
+		        text: '<%= errorPrestamo %>',
+		        confirmButtonText: 'Aceptar'
+		    }).then((result) => {
+		        if (result.isConfirmed) {
+		            window.location.href = "ClientePanelSv"; 
+		        }
+		    });
+		<% } %>
+		
+	    <% 
+	   	String successPrestamo = (String) request.getAttribute("successPrestamo");
+	   	if (successPrestamo != null && !successPrestamo.isEmpty()) { 
+	    %>
+	        Swal.fire({
+	            icon: 'success', 
+	            title: 'Éxito',
+	            text: '<%= successPrestamo %>',
+	            confirmButtonText: 'Aceptar'
+	        }).then((result) => {
+	            if (result.isConfirmed) {
+	                window.location.href = "ClientePanelSv"; 
+	            }
+	        });
+	    <% } %>
+	</script>
 </body>
 </html>
 

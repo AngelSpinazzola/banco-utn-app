@@ -1,6 +1,7 @@
 package negocio;
 
 import java.util.ArrayList;
+
 import entidad.Prestamo;
 
 public interface IPrestamoNegocio {
@@ -8,4 +9,5 @@ public interface IPrestamoNegocio {
 	public int getTotalPrestamosCount(int idCliente);
 	public int calcularTotalPaginas(int idCliente, int pageSize);
 	public int validarMonto(String monto);
+	public boolean solicitarPrestamo(Prestamo prestamo, int idCuenta);
 }
