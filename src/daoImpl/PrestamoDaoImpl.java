@@ -7,6 +7,7 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import dao.IPrestamoDao;
+import entidad.Cliente;
 import entidad.Prestamo;
 import entidad.TipoPrestamo;
 
@@ -93,6 +94,27 @@ public class PrestamoDaoImpl implements IPrestamoDao {
 
 		return totalPrestamos;
 	}
+	
+	public int getTotalSolicitudesPrestamosCount() {
+		String query = "select count(p.IDPrestamo) from prestamos p where p.Estado = 0";
+		
+		int totalSolicitudes = 0;
+		
+		try (Connection conexion = Conexion.getConnection();
+				PreparedStatement statement = conexion.prepareStatement(query)) {
+
+			try (ResultSet rs = statement.executeQuery()) {
+				if (rs.next()) {
+					totalSolicitudes = rs.getInt(1); 
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		
+		return totalSolicitudes;
+	}
 
 	@Override
 	public int calcularTotalPaginas(int idCliente, int pageSize) {
@@ -149,4 +171,63 @@ public class PrestamoDaoImpl implements IPrestamoDao {
 	    return resultado;
 	}
 
+	@Override
+	public ArrayList<Prestamo> getSolicitudesDePrestamos(int page, int pageSize){
+		ArrayList<Prestamo> prestamos = new ArrayList<>();
+		
+		int offset = (page - 1) * pageSize;
+		
+		String query = "select \r\n" + 
+				"	p.IDPrestamo as idPrestamo,\r\n" + 
+				"	c.Nombre as nombre, \r\n" + 
+				"    c.Apellido as apellido,\r\n" + 
+				"    c.DNI as dni,\r\n" + 
+				"    p.MontoPedido as montoPedido,\r\n" + 
+				"    p.ImporteAPagar as importeAPagar,\r\n" + 
+				"    p.Cuotas as cuotas,\r\n" + 
+				"    tp.Tipo as tipoPrestamo,\r\n" + 
+				"    p.Fecha as fechaSolicitud\r\n" + 
+				"from prestamos p\r\n" + 
+				"inner join tipo_prestamos tp on tp.IDTipoPrestamo = p.IDTipoPrestamo\r\n" + 
+				"inner join cuentas cu on cu.IDCuenta = p.IDCuenta\r\n" + 
+				"inner join clientes c on c.IDCliente = cu.IDCliente\r\n" + 
+				"where p.Estado = 0\r\n" + 
+				"order by fechaSolicitud desc\r\n" + 
+				"limit ? offset ?";
+		try (Connection conn = Conexion.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+	        ps.setInt(1, pageSize);
+	        ps.setInt(2, offset);
+	        
+	        ResultSet rs = ps.executeQuery();
+	        
+	        while (rs.next()) {
+	            // Crear un objeto Cliente
+	            Cliente cliente = new Cliente();
+	            cliente.setNombre(rs.getString("nombre"));
+	            cliente.setApellido(rs.getString("apellido"));
+	            cliente.setDni(rs.getString("dni"));
+	            
+	            // Crear un objeto Prestamo
+	            Prestamo prestamo = new Prestamo();
+	            prestamo.setIdPrestamo(rs.getInt("idPrestamo"));
+	            prestamo.setMontoPedido(rs.getBigDecimal("montoPedido"));
+	            prestamo.setMontoAPagar(rs.getBigDecimal("importeAPagar"));
+	            prestamo.setCuotas(rs.getInt("cuotas"));
+	            prestamo.setFecha(rs.getDate("fechaSolicitud"));
+	            
+	            TipoPrestamo tipoPrestamo = new TipoPrestamo();
+	            tipoPrestamo.setNombreTipoPrestamo(rs.getString("tipoPrestamo"));
+	            
+	            prestamo.setTipoPrestamo(tipoPrestamo);
+	            prestamo.setCliente(cliente);
+	            
+	            prestamos.add(prestamo);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return prestamos;
+		
+	}
 }

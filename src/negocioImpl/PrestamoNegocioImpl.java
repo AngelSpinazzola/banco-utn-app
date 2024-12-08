@@ -18,6 +18,20 @@ public class PrestamoNegocioImpl implements IPrestamoNegocio{
 	}
 	
 	@Override
+	public ArrayList<Prestamo> getSolicitudesDePrestamos(int page, int pageSize){
+		ArrayList<Prestamo> prestamos = iPrestamoDao.getSolicitudesDePrestamos(page, pageSize);
+		
+		return prestamos;
+	}
+	
+	@Override
+	public int getTotalSolicitudesPrestamosCount() {
+		int totalSolicitudes = iPrestamoDao.getTotalSolicitudesPrestamosCount();
+		
+		return totalSolicitudes;
+	}
+	
+	@Override
 	public int getTotalPrestamosCount(int idCliente) {
 	    return iPrestamoDao.getTotalPrestamosCount(idCliente); 
 	}

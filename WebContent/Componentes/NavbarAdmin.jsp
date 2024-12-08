@@ -147,7 +147,7 @@
 				<a class="sub-btn"><i class="fas fa-wallet"></i>Préstamos<i
 					class="fas fa-angle-right dropdown"></i></a>
 				<div class="sub-menu">
-					<a href="AdminPrestamosRevision.jsp" class="sub-item"><i class="fas fa-hourglass-half"></i>Préstamos en revisión</a> 
+					<a href="AdminSolicitudesPrestamosSv" class="sub-item"><i class="fas fa-hourglass-half"></i>Préstamos en revisión</a> 
 					<a href="AdminPrestamosActivos.jsp"class="sub-item"><i class="fas fa-check-circle"></i>Préstamos activos</a> 
 					<a href="AdminResumenPrestamos.jsp"class="sub-item"><i class="fas fa-list-alt"></i>Resumen de préstamos</a>
 				</div>

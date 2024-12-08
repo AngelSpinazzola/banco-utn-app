@@ -12,6 +12,8 @@ public class Prestamo{
 	private Date fecha;
 	TipoPrestamo tipoPrestamo;
 	private int estado;
+	private Cliente cliente;
+	private Cuenta cuenta;
 	
 	public Prestamo() {
 		super();
@@ -28,6 +30,22 @@ public class Prestamo{
 		this.estado = estado;
 	}
 	
+	public Cliente getCliente() {
+		return cliente;
+	}
+
+	public void setCliente(Cliente cliente) {
+		this.cliente = cliente;
+	}
+
+	public Cuenta getCuenta() {
+		return cuenta;
+	}
+
+	public void setCuenta(Cuenta cuenta) {
+		this.cuenta = cuenta;
+	}
+
 	public TipoPrestamo getTipoPrestamo() {
 		return tipoPrestamo;
 	}

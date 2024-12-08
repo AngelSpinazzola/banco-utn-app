@@ -1,174 +1,258 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-	pageEncoding="ISO-8859-1"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
+<%@ page import="entidad.Prestamo"%>
+<%@ page import="java.util.ArrayList"%>
 <!DOCTYPE html>
 <html lang="es"><meta charset="UTF-8">
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Banco UTN - Solicitudes de préstamos</title>
-	<style>
-		* {
-			box-sizing: border-box;
+<title>Solicitudes de préstamos</title>
+    <style>
+	   	.container {
+		    max-width: 1400px;  
+		    margin: 0 auto;
+		    padding: 15px;
 		}
-		
-		.navbar {
-			background-color: #004b93;
-			color: white;
-			padding: 1rem;
+		.table {
+			background-color: #fff;
+			border-radius: 8px;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+		}
+		.table th, .table td {
+			vertical-align: middle;
+			padding: 12px 15px;
+		}
+		.text-danger {
+			color: #dc3545 !important;
+		}
+		.text-success {
+			color: #28a745 !important;
+		}
+		.table-striped tbody tr:nth-of-type(odd) {
+			background-color: #f8f9fa;
+		}
+		.table-striped tbody tr:hover {
+			background-color: #f1f1f1;
+		}
+		.table-responsive {
+			overflow-x: auto;
+		}
+		.table th {
+			text-align: center;
+		}
+		.table td {
+			text-align: center;
+		}
+		.btn {
+		    font-size: 0.875rem; 
+		    padding: 3px 5px; 
+		    border-radius: 4px; 
+		    transition: background-color 0.3s ease, color 0.3s ease;
+		}
+		.btn-outline-success {
+		    color: #28a745;
+		    border-color: #28a745;
+		    transition: background-color 0.3s ease, color 0.3s ease;
+		}
+		.btn-outline-danger {
+		    color: #dc3545;
+		    border-color: #dc3545;
+		    transition: background-color 0.3s ease, color 0.3s ease;
+		}
+		.btn-outline-success:hover {
+		    background-color: #28a745;
+		    color: black;
+		}
+		.btn-outline-danger:hover {
+		    background-color: #dc3545;
+		    color: white;
+		}
+		.pagination-container {
 			display: flex;
 			justify-content: space-between;
 			align-items: center;
+			margin-top: 20px;
 		}
-		
-		.navbar-brand {
-			font-size: 1.2rem;
-			font-weight: bold;
-		}
-		
-		.logout-btn {
-			background-color: #39a9b3;
-			color: white;
-			border: none;
-			padding: 0.5rem 1rem;
-			border-radius: 4px;
-			cursor: pointer;
-		}
-		
-		.sidebar {
-			width: 200px;
-			background-color: #f5f5f5;
-			height: calc(100vh - 56px);
-			padding: 1rem;
-			float: left;
-		}
-		
-		.sidebar-item {
-			padding: 0.5rem;
-			margin-bottom: 0.5rem;
-			cursor: pointer;
-		}
-		
-		.sidebar-item.active {
-			background-color: #cce5ff;
-			border-radius: 4px;
-		}
-		
-		.main-content {
-			margin-left: 200px;
-			padding: 2rem;
-		}
-		
-		.page-title {
-			color: #333;
-			margin-bottom: 2rem;
-		}
-		
-		table {
-			width: 100%;
-			border-collapse: collapse;
-			margin-top: 1rem;
-		}
-		
-		th, td {
-			padding: 0.75rem;
-			text-align: left;
-			border-bottom: 1px solid #ddd;
-		}
-		
-		.btn {
-			padding: 0.25rem 0.75rem;
-			border: none;
-			border-radius: 4px;
-			color: white;
-			cursor: pointer;
-			margin-right: 0.5rem;
-		}
-		
-		.btn-success {
-			background-color: #28a745;
-		}
-		
-		.btn-danger {
-			background-color: #dc3545;
-		}
-		
 		.pagination {
-			margin-top: 1rem;
-			display: flex;
-			gap: 0.5rem;
-			align-items: center;
+			margin-top: 20px;
 		}
-		
-		.pagination a {
-			padding: 0.25rem 0.5rem;
-			text-decoration: none;
-			color: #004b93;
-		}
-		
-		.pagination a.active {
-			background-color: #004b93;
+		.pagination button {
+			background-color: #aac4ee;
+			border: none;
 			color: white;
-			border-radius: 4px;
+			padding: 8px 16px;
+			text-decoration: none;
+			font-size: 16px;
+			margin: 4px 2px;
+			cursor: pointer;
+			transition: background-color 0.3s ease;
+			border-radius: 2px;
 		}
-	</style>
-	<%@ include file="Componentes/Head.jsp"%>
+		.pagination button:hover {
+			background-color: #2F4E93;
+			color: white;
+		}
+		.pagination button.active {
+			text-color: white;
+			background-color: #2F4E93;
+			color: white;
+		}
+		.page-link {
+			color: #003b7a;
+			background-color: white;
+			border: 1px solid #dee2e6;
+		}
+		.page-link:hover {
+			background-color: #f0f0f0;
+			color: #0056b3;
+		}
+		.page-item.active .page-link {
+			background-color: #003b7a;
+			border-color: #003b7a;
+			color: white;
+		}
+		.page-item.disabled .page-link {
+			color: #6c757d;
+			pointer-events: none;
+			background-color: #fff;
+			border-color: #dee2e6;
+		}
+		.pagination-info {
+			margin-top: 5px;
+			display: inline-block;
+			margin-right: 20px;
+			font-size: 1rem; 
+			margin-right: auto; 
+		}
+    </style>
+    <%@ include file="Componentes/Head.jsp"%>
 </head>
 <body>
 
-	<%@ include file="Componentes/NavbarAdmin.jsp"%>
-	<div class="main-content">
-		<h2 class="page-title">Solicitudes de préstamos</h2>
-		<table>
-			<thead>
-				<tr>
-					<th>Nombre y apellido</th>
-					<th>DNI</th>
-					<th>Monto solicitado</th>
-					<th>Cuotas</th>
-					<th>Concepto</th>
-					<th>Acciones</th>
-				</tr>
-			</thead>
-			<tbody>
-				<tr>
-					<td>Armando Barreda</td>
-					<td>38500015</td>
-					<td>$50.000</td>
-					<td>6</td>
-					<td>Hipotecario</td>
-					<td>
-						<button class="btn btn-success">Aprobar</button>
-						<button class="btn btn-danger">Rechazar</button>
-					</td>
-				</tr>
-				<tr>
-					<td>Bob Avrula</td>
-					<td>88500015</td>
-					<td>$95.000</td>
-					<td>12</td>
-					<td>Personal</td>
-					<td>
-						<button class="btn btn-success">Aprobar</button>
-						<button class="btn btn-danger">Rechazar</button>
-					</td>
-				</tr>
-				<tr>
-					<td>Leo Pondo</td>
-					<td>12413344</td>
-					<td>$50.000</td>
-					<td>6</td>
-					<td>Hipotecario</td>
-					<td>
-						<button class="btn btn-success">Aprobar</button>
-						<button class="btn btn-danger">Rechazar</button>
-					</td>
-				</tr>
-			</tbody>
-		</table>
+    <%@ include file="Componentes/NavbarAdmin.jsp"%>
 
-		<div class="pagination">
-			<span>Mostrando página 1 de 2</span> <a href="#" class="active">1</a>
-			<a href="#">2</a> <a href="#">3</a> <a href="#">Siguiente</a>
-		</div>
-	</div>
+    <div class="container mt-5" style="margin-bottom: 40px;">
+    <h4 class="card-title text-left" style="margin-bottom: 40px;">Solicitudes de préstamos pendientes</h4>
+    <%
+        ArrayList<Prestamo> listaPrestamos = (ArrayList<Prestamo>) request.getAttribute("listaPrestamos");
+        if (listaPrestamos != null && !listaPrestamos.isEmpty()) {
+    %>
+    <table class="table table-striped table-hover">
+        <thead>
+            <tr>
+                <th>Cliente</th>
+                <th>DNI</th>
+                <th>Tipo de préstamo</th>
+                <th>Monto solicitado</th>
+                <th>Monto a pagar</th>
+                <th>Cuotas</th>
+                <th>Fecha</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+            <%
+                for (Prestamo prestamo : listaPrestamos) {
+            %>
+            <tr>
+                <td><%=prestamo.getCliente().getNombre() + " " + prestamo.getCliente().getApellido()%></td>
+                <td><%=prestamo.getCliente().getDni()%></td>
+                <td><%=prestamo.getTipoPrestamo().getNombreTipoPrestamo()%></td>
+                <td>$<%=prestamo.getMontoPedido()%></td>
+                <td>$<%=prestamo.getMontoAPagar()%></td>
+                <td><%=prestamo.getCuotas()%></td>
+                <td><%=prestamo.getFecha()%></td>
+                <td>
+                    <button class="btn btn-outline-success" onclick="aprobarPrestamo(<%=prestamo.getIdPrestamo()%>)">Aprobar</button>
+                    <button class="btn btn-outline-danger" onclick="rechazarPrestamo(<%=prestamo.getIdPrestamo()%>)">Rechazar</button>
+                </td>
+            </tr>
+            <%
+                }
+            %>
+        </tbody>
+    </table>
+    
+    <%
+        Integer totalPrestamos = (Integer) request.getAttribute("totalPrestamos");
+        Integer totalPaginas = (Integer) request.getAttribute("totalPaginas");
+        Integer paginaActual = (Integer) request.getAttribute("paginaActual");
+        if (totalPrestamos > 5) {
+    %>
+    <nav aria-label="Paginación de préstamos" class="text-center">
+        <ul class="pagination justify-content-center">
+            <div class="pagination-info">
+                Mostrando página <%=paginaActual%> de <%=totalPaginas%>
+            </div>
+            <li class="page-item <%=paginaActual == 1 ? "disabled" : ""%>">
+                <a class="page-link"
+                   <%=paginaActual == 1 ? "" : "href='AdminSolicitudesPrestamosSv?page=" + (paginaActual - 1) + "&pageSize=5'"%>>
+                    Anterior 
+                </a>
+            </li>
+
+            <%
+                int startPage = Math.max(1, paginaActual - 1);
+                int endPage = Math.min(totalPaginas, startPage + 2);
+
+                if (endPage - startPage < 2) {
+                    startPage = Math.max(1, endPage - 2);
+                }
+
+                if (startPage > 1) {
+            %>
+            <li class="page-item">
+                <a class="page-link" href="AdminSolicitudesPrestamosSv?page=1&pageSize=5">1</a>
+            </li>
+            <li class="page-item disabled">
+                <span class="page-link">...</span>
+            </li>
+            <%
+                }
+
+                for (int i = startPage; i <= endPage; i++) {
+            %>
+            <li class="page-item <%=i == paginaActual ? "active" : ""%>">
+                <a class="page-link" href="AdminSolicitudesPrestamosSv?page=<%=i%>&pageSize=5">
+                    <%=i%>
+                </a>
+            </li>
+            <%
+                }
+
+                if (endPage < totalPaginas) {
+            %>
+            <li class="page-item disabled">
+                <span class="page-link">...</span>
+            </li>
+            <li class="page-item">
+                <a class="page-link" href="AdminSolicitudesPrestamosSv?page=<%=totalPaginas%>&pageSize=5">
+                    <%=totalPaginas%>
+                </a>
+            </li>
+            <%
+                }
+            %>
+
+            <li class="page-item <%=paginaActual == totalPaginas ? "disabled" : ""%>">
+                <a class="page-link"
+                   <%=paginaActual == totalPaginas ? "" : "href='AdminSolicitudesPrestamosSv?page=" + (paginaActual + 1) + "&pageSize=5'"%>>
+                    Siguiente 
+                </a>
+            </li>
+        </ul>
+    </nav>
+    <%
+        }
+    %>
+    <%
+        } else {
+    %>
+    <p class="text-center">No se registraron solicitudes de préstamos pendientes.</p>
+    <%
+        }
+    %>
+</div>
+
 </body>
 </html>
+
