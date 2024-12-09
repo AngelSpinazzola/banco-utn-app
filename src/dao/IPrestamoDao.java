@@ -11,4 +11,5 @@ public interface IPrestamoDao {
 	public int getPrestamosPorCuenta(int idCuenta);
 	public boolean solicitarPrestamo(Prestamo prestamo, int idCuenta);
 	public ArrayList<Prestamo> getSolicitudesDePrestamos(int page, int pageSize);
+	public boolean rechazarPrestamo(int idPrestamo);
 }

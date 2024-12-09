@@ -12,4 +12,5 @@ public interface IPrestamoNegocio {
 	public int validarMonto(String monto);
 	public boolean solicitarPrestamo(Prestamo prestamo, int idCuenta);
 	public ArrayList<Prestamo> getSolicitudesDePrestamos(int page, int pageSize);
+	public boolean rechazarPrestamo(int idPrestamo);
 }

@@ -90,5 +90,13 @@ public class PrestamoNegocioImpl implements IPrestamoNegocio{
 		
 		return resultado;
 	}
+	
+	
+	@Override
+	public boolean rechazarPrestamo(int idPrestamo) {
+		boolean resultado = iPrestamoDao.rechazarPrestamo(idPrestamo);
+		
+		return resultado;
+	}
 
 }

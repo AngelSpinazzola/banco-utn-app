@@ -230,4 +230,26 @@ public class PrestamoDaoImpl implements IPrestamoDao {
 	    return prestamos;
 		
 	}
+	
+	public boolean rechazarPrestamo(int idPrestamo) {
+	    String query = "UPDATE prestamos SET Estado = 2 WHERE IDPrestamo = ?";
+	    boolean resultado = false;
+	    
+	    try (Connection conexion = Conexion.getConnection();
+	         PreparedStatement statement = conexion.prepareStatement(query)) {
+	         
+	        statement.setInt(1, idPrestamo);
+	        
+	        int filasAfectadas = statement.executeUpdate();
+	        
+	        if (filasAfectadas > 0) {
+	            resultado = true;
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace(); 
+	    }
+	    
+	    return resultado;
+	}
+
 }

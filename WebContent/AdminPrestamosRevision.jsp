@@ -131,128 +131,153 @@
     <%@ include file="Componentes/NavbarAdmin.jsp"%>
 
     <div class="container mt-5" style="margin-bottom: 40px;">
-    <h4 class="card-title text-left" style="margin-bottom: 40px;">Solicitudes de préstamos pendientes</h4>
-    <%
-        ArrayList<Prestamo> listaPrestamos = (ArrayList<Prestamo>) request.getAttribute("listaPrestamos");
-        if (listaPrestamos != null && !listaPrestamos.isEmpty()) {
-    %>
-    <table class="table table-striped table-hover">
-        <thead>
-            <tr>
-                <th>Cliente</th>
-                <th>DNI</th>
-                <th>Tipo de préstamo</th>
-                <th>Monto solicitado</th>
-                <th>Monto a pagar</th>
-                <th>Cuotas</th>
-                <th>Fecha</th>
-                <th>Acciones</th>
-            </tr>
-        </thead>
-        <tbody>
-            <%
-                for (Prestamo prestamo : listaPrestamos) {
-            %>
-            <tr>
-                <td><%=prestamo.getCliente().getNombre() + " " + prestamo.getCliente().getApellido()%></td>
-                <td><%=prestamo.getCliente().getDni()%></td>
-                <td><%=prestamo.getTipoPrestamo().getNombreTipoPrestamo()%></td>
-                <td>$<%=prestamo.getMontoPedido()%></td>
-                <td>$<%=prestamo.getMontoAPagar()%></td>
-                <td><%=prestamo.getCuotas()%></td>
-                <td><%=prestamo.getFecha()%></td>
-                <td>
-                    <button class="btn btn-outline-success" onclick="aprobarPrestamo(<%=prestamo.getIdPrestamo()%>)">Aprobar</button>
-                    <button class="btn btn-outline-danger" onclick="rechazarPrestamo(<%=prestamo.getIdPrestamo()%>)">Rechazar</button>
-                </td>
-            </tr>
-            <%
-                }
-            %>
-        </tbody>
-    </table>
-    
-    <%
-        Integer totalPrestamos = (Integer) request.getAttribute("totalPrestamos");
-        Integer totalPaginas = (Integer) request.getAttribute("totalPaginas");
-        Integer paginaActual = (Integer) request.getAttribute("paginaActual");
-        if (totalPrestamos > 5) {
-    %>
-    <nav aria-label="Paginación de préstamos" class="text-center">
-        <ul class="pagination justify-content-center">
-            <div class="pagination-info">
-                Mostrando página <%=paginaActual%> de <%=totalPaginas%>
-            </div>
-            <li class="page-item <%=paginaActual == 1 ? "disabled" : ""%>">
-                <a class="page-link"
-                   <%=paginaActual == 1 ? "" : "href='AdminSolicitudesPrestamosSv?page=" + (paginaActual - 1) + "&pageSize=5'"%>>
-                    Anterior 
-                </a>
-            </li>
+	    <h4 class="card-title text-left" style="margin-bottom: 40px;">Solicitudes de préstamos pendientes</h4>
+	    <%
+	        ArrayList<Prestamo> listaPrestamos = (ArrayList<Prestamo>) request.getAttribute("listaPrestamos");
+	        if (listaPrestamos != null && !listaPrestamos.isEmpty()) {
+	    %>
+	    <table class="table table-striped table-hover">
+	        <thead>
+	            <tr>
+	                <th>Cliente</th>
+	                <th>DNI</th>
+	                <th>Tipo de préstamo</th>
+	                <th>Monto solicitado</th>
+	                <th>Monto a pagar</th>
+	                <th>Cuotas</th>
+	                <th>Fecha</th>
+	                <th>Acciones</th>
+	            </tr>
+	        </thead>
+	        <tbody>
+	            <%
+	                for (Prestamo prestamo : listaPrestamos) {
+	            %>
+	            <tr>
+	                <td><%=prestamo.getCliente().getNombre() + " " + prestamo.getCliente().getApellido()%></td>
+	                <td><%=prestamo.getCliente().getDni()%></td>
+	                <td><%=prestamo.getTipoPrestamo().getNombreTipoPrestamo()%></td>
+	                <td>$<%=prestamo.getMontoPedido()%></td>
+	                <td>$<%=prestamo.getMontoAPagar()%></td>
+	                <td><%=prestamo.getCuotas()%></td>
+	                <td><%=prestamo.getFecha()%></td>
+	                <td>
+	                     <form action="AdminSolicitudesPrestamosSv" method="post" style="display:inline;">
+					        <input type="hidden" name="idPrestamo" value="<%=prestamo.getIdPrestamo()%>">
+					        <input type="hidden" name="accion" value="aprobar">
+					        <button type="submit" class="btn btn-outline-success">Aprobar</button>
+					    </form>
+					    <form action="AdminSolicitudesPrestamosSv" method="post" style="display:inline;">
+					        <input type="hidden" name="idPrestamo" value="<%=prestamo.getIdPrestamo()%>">
+					        <input type="hidden" name="accion" value="rechazar">
+					        <button type="submit" class="btn btn-outline-danger" onclick="confirmarRechazo('<%=prestamo.getIdPrestamo()%>')">Rechazar</button>
+					    </form>
+	                </td>
+	            </tr>
+	            <%
+	                }
+	            %>
+	        </tbody>
+	    </table>
+	    
+	    <%
+	        Integer totalPrestamos = (Integer) request.getAttribute("totalPrestamos");
+	        Integer totalPaginas = (Integer) request.getAttribute("totalPaginas");
+	        Integer paginaActual = (Integer) request.getAttribute("paginaActual");
+	        if (totalPrestamos > 5) {
+	    %>
+	    <nav aria-label="Paginación de préstamos" class="text-center" style="margin-top: 50px;">
+	        <ul class="pagination justify-content-center">
+	            <div class="pagination-info">
+	                Mostrando página <%=paginaActual%> de <%=totalPaginas%>
+	            </div>
+	            <li class="page-item <%=paginaActual == 1 ? "disabled" : ""%>">
+	                <a class="page-link"
+	                   <%=paginaActual == 1 ? "" : "href='AdminSolicitudesPrestamosSv?page=" + (paginaActual - 1) + "&pageSize=5'"%>>
+	                    Anterior 
+	                </a>
+	            </li>
+	
+	            <%
+	                int startPage = Math.max(1, paginaActual - 1);
+	                int endPage = Math.min(totalPaginas, startPage + 2);
+	
+	                if (endPage - startPage < 2) {
+	                    startPage = Math.max(1, endPage - 2);
+	                }
+	
+	                if (startPage > 1) {
+	            %>
+	            <li class="page-item">
+	                <a class="page-link" href="AdminSolicitudesPrestamosSv?page=1&pageSize=5">1</a>
+	            </li>
+	            <li class="page-item disabled">
+	                <span class="page-link">...</span>
+	            </li>
+	            <%
+	                }
+	
+	                for (int i = startPage; i <= endPage; i++) {
+	            %>
+	            <li class="page-item <%=i == paginaActual ? "active" : ""%>">
+	                <a class="page-link" href="AdminSolicitudesPrestamosSv?page=<%=i%>&pageSize=5">
+	                    <%=i%>
+	                </a>
+	            </li>
+	            <%
+	                }
+	
+	                if (endPage < totalPaginas) {
+	            %>
+	            <li class="page-item disabled">
+	                <span class="page-link">...</span>
+	            </li>
+	            <li class="page-item">
+	                <a class="page-link" href="AdminSolicitudesPrestamosSv?page=<%=totalPaginas%>&pageSize=5">
+	                    <%=totalPaginas%>
+	                </a>
+	            </li>
+	            <%
+	                }
+	            %>
+	
+	            <li class="page-item <%=paginaActual == totalPaginas ? "disabled" : ""%>">
+	                <a class="page-link"
+	                   <%=paginaActual == totalPaginas ? "" : "href='AdminSolicitudesPrestamosSv?page=" + (paginaActual + 1) + "&pageSize=5'"%>>
+	                    Siguiente 
+	                </a>
+	            </li>
+	        </ul>
+	    </nav>
+	    <%
+	        }
+	    %>
+	    <%
+	        } else {
+	    %>
+	    <p class="text-center">No se registraron solicitudes de préstamos pendientes.</p>
+	    <%
+	        }
+	    %>
+	</div>
+	<script>
 
-            <%
-                int startPage = Math.max(1, paginaActual - 1);
-                int endPage = Math.min(totalPaginas, startPage + 2);
-
-                if (endPage - startPage < 2) {
-                    startPage = Math.max(1, endPage - 2);
-                }
-
-                if (startPage > 1) {
-            %>
-            <li class="page-item">
-                <a class="page-link" href="AdminSolicitudesPrestamosSv?page=1&pageSize=5">1</a>
-            </li>
-            <li class="page-item disabled">
-                <span class="page-link">...</span>
-            </li>
-            <%
-                }
-
-                for (int i = startPage; i <= endPage; i++) {
-            %>
-            <li class="page-item <%=i == paginaActual ? "active" : ""%>">
-                <a class="page-link" href="AdminSolicitudesPrestamosSv?page=<%=i%>&pageSize=5">
-                    <%=i%>
-                </a>
-            </li>
-            <%
-                }
-
-                if (endPage < totalPaginas) {
-            %>
-            <li class="page-item disabled">
-                <span class="page-link">...</span>
-            </li>
-            <li class="page-item">
-                <a class="page-link" href="AdminSolicitudesPrestamosSv?page=<%=totalPaginas%>&pageSize=5">
-                    <%=totalPaginas%>
-                </a>
-            </li>
-            <%
-                }
-            %>
-
-            <li class="page-item <%=paginaActual == totalPaginas ? "disabled" : ""%>">
-                <a class="page-link"
-                   <%=paginaActual == totalPaginas ? "" : "href='AdminSolicitudesPrestamosSv?page=" + (paginaActual + 1) + "&pageSize=5'"%>>
-                    Siguiente 
-                </a>
-            </li>
-        </ul>
-    </nav>
-    <%
-        }
-    %>
-    <%
-        } else {
-    %>
-    <p class="text-center">No se registraron solicitudes de préstamos pendientes.</p>
-    <%
-        }
-    %>
-</div>
-
+	  <% 
+	   	String prestamoRechazado = (String) request.getAttribute("prestamoRechazado");
+	   	if (prestamoRechazado != null && !prestamoRechazado.isEmpty()) { 
+      %>
+	        Swal.fire({
+	            icon: 'success', 
+	            title: 'Éxito',
+	            text: '<%= prestamoRechazado %>',
+	            confirmButtonText: 'Aceptar'
+	        }).then((result) => {
+	            if (result.isConfirmed) {
+	                window.location.href = "AdminSolicitudesPrestamosSv"; 
+	            }
+	        });
+   	  <% } %>
+	</script>
 </body>
 </html>
 
