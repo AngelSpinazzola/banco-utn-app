@@ -598,6 +598,11 @@ BEGIN
         v_IDCuenta,
         2 
     );
+    
+    -- Suma el monto solicitado al saldo de la cuenta del cliente
+    UPDATE CUENTAS
+    SET Saldo = Saldo + v_MontoPedido
+    WHERE IDCuenta = v_IDCuenta;
 END //
 
 DELIMITER ;

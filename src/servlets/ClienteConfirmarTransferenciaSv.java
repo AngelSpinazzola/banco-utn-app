@@ -7,6 +7,8 @@ import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
+
+import excepciones.TransferenciaException;
 import negocio.ICuentaNegocio;
 import negocioImpl.CuentaNegocioImpl;
 
@@ -31,11 +33,16 @@ public class ClienteConfirmarTransferenciaSv extends HttpServlet {
 
         boolean transferenciaExitosa = iCuentaNegocio.realizarTransferencia(cbuOrigen, cbuDestino, monto);
         	
-        if (transferenciaExitosa) {
-            request.setAttribute("successTransferencia", "La transferencia se realizó con éxito.");
-        } else {
-            request.setAttribute("errorTransferencia", "Ocurrió un error al realizar la transferencia.");
+        try {
+            if (transferenciaExitosa) {
+                request.setAttribute("successTransferencia", "La transferencia se realizó con éxito.");
+            } else {
+                throw new TransferenciaException("Ocurrió un error al realizar la transferencia.");
+            }
+        } catch (TransferenciaException e) {
+            request.setAttribute("errorTransferencia", e.getMessage());
         }
+
 
         request.setAttribute("cbuOrigen", cbuOrigen);
         request.setAttribute("cbuDestino", cbuDestino);
