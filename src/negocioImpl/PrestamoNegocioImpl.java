@@ -98,5 +98,24 @@ public class PrestamoNegocioImpl implements IPrestamoNegocio{
 		
 		return resultado;
 	}
+	
+	@Override
+	public boolean aprobarPrestamo(int idPrestamo) {
+		boolean resultado = iPrestamoDao.aprobarPrestamo(idPrestamo);
+		
+		return resultado;
+	}
+	
+	@Override
+	public int getTotalPrestamosActivosCount() {
+		return iPrestamoDao.getTotalPrestamosActivosCount();
+	}
+	
+	@Override
+	public ArrayList<Prestamo> getPrestamosActivos(int page, int pageSize){
+		ArrayList<Prestamo> prestamos = iPrestamoDao.getPrestamosActivos(page, pageSize); 
+		
+		return prestamos;
+	}
 
 }

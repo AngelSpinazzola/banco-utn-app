@@ -9,11 +9,13 @@ public class Prestamo{
 	private BigDecimal montoPedido;
 	private BigDecimal montoAPagar;
 	private int cuotas;
+	private int cuotasPagas;
 	private Date fecha;
 	TipoPrestamo tipoPrestamo;
 	private int estado;
 	private Cliente cliente;
 	private Cuenta cuenta;
+	Movimiento movimiento;
 	
 	public Prestamo() {
 		super();
@@ -29,7 +31,22 @@ public class Prestamo{
 		this.fecha = fecha;
 		this.estado = estado;
 	}
-	
+	public int getCuotasPagas() {
+		return cuotasPagas;
+	}
+
+	public void setCuotasPagas(int cuotasPagas) {
+		this.cuotasPagas = cuotasPagas;
+	}
+
+	public Movimiento getMovimiento() {
+		return movimiento;
+	}
+
+	public void setMovimiento(Movimiento movimiento) {
+		this.movimiento = movimiento;
+	}
+
 	public Cliente getCliente() {
 		return cliente;
 	}

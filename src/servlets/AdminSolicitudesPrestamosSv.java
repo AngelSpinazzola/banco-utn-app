@@ -25,7 +25,6 @@ public class AdminSolicitudesPrestamosSv extends HttpServlet {
     }
 
 	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		
 		String pageParam = request.getParameter("page");
         String pageSizeParam = request.getParameter("pageSize");
 
@@ -52,7 +51,10 @@ public class AdminSolicitudesPrestamosSv extends HttpServlet {
         boolean resultado;
         
         if ("aprobar".equals(accion)) {
-             //aprobarPrestamo(idPrestamo);
+             resultado = iPrestamoNegocio.aprobarPrestamo(idPrestamo);
+             if(resultado) {
+            	 request.setAttribute("prestamoAprobado", "Préstamo aprobado correctamente");
+             }
         } 
         else if ("rechazar".equals(accion)) {
         	resultado = iPrestamoNegocio.rechazarPrestamo(idPrestamo);

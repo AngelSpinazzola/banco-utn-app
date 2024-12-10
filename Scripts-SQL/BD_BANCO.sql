@@ -110,7 +110,8 @@ CREATE TABLE PRESTAMOS (
 CREATE TABLE PLAZOS (
     IDPlazo INT PRIMARY KEY AUTO_INCREMENT,
     IDPrestamo INT,
-    MesQuePaga VARCHAR(20) NOT NULL,
+    FechaDeVencimiento DATE NOT NULL,
+    FechaDePago DATE NULL,
     NroCuota INT NOT NULL,
     ImporteAPagarCuotas DECIMAL(10,2) NOT NULL,
     Estado BIT NOT NULL,
@@ -119,7 +120,6 @@ CREATE TABLE PLAZOS (
     CONSTRAINT chk_NroCuota CHECK (NroCuota REGEXP '^[0-9]+$')
 );
 
-
 CREATE TABLE TIPO_MOVIMIENTOS (
     IDTipoMovimiento INT PRIMARY KEY AUTO_INCREMENT,
     Nombre VARCHAR(100) NOT NULL
@@ -127,7 +127,7 @@ CREATE TABLE TIPO_MOVIMIENTOS (
 
 INSERT INTO TIPO_MOVIMIENTOS (Nombre) 
 VALUES ('Alta de cuenta'),
-('Alta de un préstamo'),
+('Alta de préstamo'),
 ('Pago de préstamo'),
 ('Transferencia'),
 ('Administrativo');
@@ -135,7 +135,7 @@ VALUES ('Alta de cuenta'),
 CREATE TABLE MOVIMIENTOS (
     IDMovimiento INT PRIMARY KEY AUTO_INCREMENT,
     Fecha DATE NOT NULL,
-    DetalleOrigen VARCHAR(100) NULL, -- Si es null, es por que no hay un detalle origen y el movimiento fue administrativo.
+    DetalleOrigen VARCHAR(100) NULL, 
     DetalleDestino VARCHAR(100) NOT NULL,
     Importe DECIMAL(18,2) NOT NULL,
     IDCuentaEmisor INT,
@@ -546,6 +546,99 @@ END $$
 
 DELIMITER ;
 
+-- Procedure para aprobar préstamo y generar las cuotas del mismo
+DELIMITER //
+
+CREATE PROCEDURE SP_AprobarPrestamo (IN p_IDPrestamo INT)
+BEGIN
+    DECLARE v_MontoPedido DECIMAL(10,2);
+    DECLARE v_Cuotas INT;
+    DECLARE v_ImporteCuota DECIMAL(10,2);
+    DECLARE v_IDCuenta INT;
+    DECLARE v_ImporteAPagar DECIMAL(10,2);
+    DECLARE v_FechaAprobacion DATE DEFAULT CURDATE();
+    DECLARE v_TipoPrestamo VARCHAR(50);
+
+    UPDATE PRESTAMOS
+    SET Estado = 1
+    WHERE IDPrestamo = p_IDPrestamo;
+
+    SELECT MontoPedido, Cuotas, IDCuenta, ImporteAPagar, TP.Tipo AS TipoPrestamo
+    INTO v_MontoPedido, v_Cuotas, v_IDCuenta, v_ImporteAPagar, v_TipoPrestamo
+    FROM PRESTAMOS P
+    JOIN TIPO_PRESTAMOS TP ON P.IDTipoPrestamo = TP.IDTipoPrestamo
+    WHERE IDPrestamo = p_IDPrestamo;
+
+    SET v_ImporteCuota = v_ImporteAPagar / v_Cuotas;
+
+    -- Genera las cuotas en la tabla PLAZOS
+    BEGIN
+        DECLARE i INT DEFAULT 1;
+        WHILE i <= v_Cuotas DO
+            INSERT INTO PLAZOS (IDPrestamo, FechaDeVencimiento, FechaDePago, NroCuota, ImporteAPagarCuotas, Estado)
+            VALUES (
+                p_IDPrestamo,
+                DATE_ADD(v_FechaAprobacion, INTERVAL i MONTH),
+                NULL,
+                i,
+                v_ImporteCuota,
+                0
+            );
+            SET i = i + 1;
+        END WHILE;
+    END;
+
+    INSERT INTO MOVIMIENTOS (Fecha, DetalleOrigen, DetalleDestino, Importe, IDCuentaEmisor, IDCuentaReceptor, IDTipoMovimiento)
+    VALUES (
+        v_FechaAprobacion,
+        'Alta de préstamo', 
+        CONCAT('Préstamo ',v_TipoPrestamo), 
+        v_MontoPedido,
+        v_IDCuenta,
+        v_IDCuenta,
+        2 
+    );
+END //
+
+DELIMITER ;
+
+
+-- Procedure que devuelve listado paginado con los préstamos activos
+DELIMITER //
+
+CREATE PROCEDURE SP_ListarPrestamosActivos(
+    IN limite INT, 
+    IN offset INT
+)
+BEGIN
+    SELECT 
+        p.IDPrestamo AS idPrestamo,
+        c.Nombre AS nombre,
+        c.Apellido AS apellido,
+        p.MontoPedido AS montoPedido,
+        p.ImporteAPagar AS importeAPagar,
+        tp.Tipo AS tipoPrestamo,
+        (SELECT COUNT(*) 
+         FROM plazos 
+         WHERE plazos.IDPrestamo = p.IDPrestamo) AS cuotasTotales,
+        (SELECT COUNT(*) 
+         FROM plazos 
+         WHERE plazos.IDPrestamo = p.IDPrestamo AND plazos.Estado = 1) AS cuotasAbonadas,
+        MAX(m.Fecha) AS fechaAprobacion, -- Asegura una única fecha
+        p.Estado AS estado
+    FROM prestamos p
+    INNER JOIN tipo_prestamos tp ON tp.IDTipoPrestamo = p.IDTipoPrestamo
+    INNER JOIN cuentas cu ON cu.IDCuenta = p.IDCuenta
+    INNER JOIN clientes c ON c.IDCliente = cu.IDCliente
+    INNER JOIN movimientos m ON m.IDCuentaEmisor = cu.IDCuenta
+    WHERE p.Estado = 1
+    GROUP BY p.IDPrestamo, c.Nombre, c.Apellido, p.MontoPedido, p.ImporteAPagar, tp.Tipo, p.Estado
+    LIMIT limite OFFSET offset;
+END //
+
+DELIMITER ;
+
+
 -- Inserts para la tabla NACIONALIDADES
 INSERT INTO NACIONALIDADES (Nacionalidad) 
 VALUES
@@ -743,7 +836,8 @@ VALUES
 (2, 2, 25000.00, 27500.00, 36, '2022-04-04'),   
 (2, 2, 30000.00, 33000.00, 12, '2023-02-03'),   
 (1, 2, 35000.00, 43750.00, 24, '2023-02-01'),  
-(1, 3, 40000.00, 50000.00, 18, '2022-05-07'),  
+(1, 3, 40000.00, 50000.00, 18, '2022-05-07'),
+(5, 3, 40000.00, 50000.00, 18, '2022-05-07'),    
 (4, 4, 45000.00, 54000.00, 36, '2023-08-01'),  
 (5, 5, 50000.00, 52500.00, 12, '2023-09-08'),  
 (1, 7, 55000.00, 68750.00, 24, '2023-10-01'), 

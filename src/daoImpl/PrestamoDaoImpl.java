@@ -8,6 +8,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import dao.IPrestamoDao;
 import entidad.Cliente;
+import entidad.Movimiento;
 import entidad.Prestamo;
 import entidad.TipoPrestamo;
 
@@ -94,6 +95,72 @@ public class PrestamoDaoImpl implements IPrestamoDao {
 
 		return totalPrestamos;
 	}
+	
+	@Override 
+	public int getTotalPrestamosActivosCount() {
+		String query = "select count(*) from prestamos where Estado = 1";
+		
+		int totalPrestamosActivos = 0;
+
+		try (Connection conexion = Conexion.getConnection();
+				PreparedStatement statement = conexion.prepareStatement(query)) {
+
+
+			try (ResultSet rs = statement.executeQuery()) {
+				if (rs.next()) {
+					totalPrestamosActivos = rs.getInt(1); 
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+
+		return totalPrestamosActivos;
+	}
+	
+	@Override
+	public ArrayList<Prestamo> getPrestamosActivos(int page, int pageSize){
+		ArrayList<Prestamo> prestamos = new ArrayList<>();
+
+		int offset = (page - 1) * pageSize;
+		
+		String query = "{CALL SP_ListarPrestamosActivos(?,?)}";
+		
+		try (Connection conn = Conexion.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+			ps.setInt(1, pageSize);
+			ps.setInt(2, offset);
+			ResultSet rs = ps.executeQuery();
+
+			while (rs.next()) {
+				TipoPrestamo tipoPrestamo = new TipoPrestamo();
+				tipoPrestamo.setNombreTipoPrestamo(rs.getString("tipoPrestamo"));
+				
+				Cliente cliente = new Cliente();
+				cliente.setNombre(rs.getString("nombre"));
+				cliente.setApellido(rs.getString("apellido"));
+				
+				Prestamo prestamo = new Prestamo();
+				
+				prestamo.setIdPrestamo(rs.getInt("idPrestamo"));
+				prestamo.setCliente(cliente);
+				prestamo.setMontoPedido(rs.getBigDecimal("montoPedido"));
+				prestamo.setMontoAPagar(rs.getBigDecimal("importeAPagar"));
+				prestamo.setTipoPrestamo(tipoPrestamo);
+				prestamo.setCuotas(rs.getInt("cuotasTotales"));
+				prestamo.setCuotasPagas(rs.getInt("cuotasAbonadas"));
+				prestamo.setFecha(rs.getDate("fechaAprobacion"));
+				prestamo.setEstado(rs.getInt("estado"));
+				
+				prestamos.add(prestamo);
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return prestamos;
+	
+	}
+	
 	
 	public int getTotalSolicitudesPrestamosCount() {
 		String query = "select count(p.IDPrestamo) from prestamos p where p.Estado = 0";
@@ -201,13 +268,11 @@ public class PrestamoDaoImpl implements IPrestamoDao {
 	        ResultSet rs = ps.executeQuery();
 	        
 	        while (rs.next()) {
-	            // Crear un objeto Cliente
 	            Cliente cliente = new Cliente();
 	            cliente.setNombre(rs.getString("nombre"));
 	            cliente.setApellido(rs.getString("apellido"));
 	            cliente.setDni(rs.getString("dni"));
 	            
-	            // Crear un objeto Prestamo
 	            Prestamo prestamo = new Prestamo();
 	            prestamo.setIdPrestamo(rs.getInt("idPrestamo"));
 	            prestamo.setMontoPedido(rs.getBigDecimal("montoPedido"));
@@ -231,9 +296,33 @@ public class PrestamoDaoImpl implements IPrestamoDao {
 		
 	}
 	
+	@Override
 	public boolean rechazarPrestamo(int idPrestamo) {
 	    String query = "UPDATE prestamos SET Estado = 2 WHERE IDPrestamo = ?";
 	    boolean resultado = false;
+	    
+	    try (Connection conexion = Conexion.getConnection();
+	         PreparedStatement statement = conexion.prepareStatement(query)) {
+	         
+	        statement.setInt(1, idPrestamo);
+	        
+	        int filasAfectadas = statement.executeUpdate();
+	        
+	        if (filasAfectadas > 0) {
+	            resultado = true;
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace(); 
+	    }
+	    
+	    return resultado;
+	}
+	
+	@Override
+	public boolean aprobarPrestamo(int idPrestamo) {
+		String query = "{CALL SP_AprobarPrestamo(?)}";
+		
+		boolean resultado = false;
 	    
 	    try (Connection conexion = Conexion.getConnection();
 	         PreparedStatement statement = conexion.prepareStatement(query)) {

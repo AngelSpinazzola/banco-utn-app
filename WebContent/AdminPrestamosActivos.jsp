@@ -1,190 +1,229 @@
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
-    pageEncoding="ISO-8859-1"%>
+<%@ page import="entidad.Prestamo"%>
+<%@ page import="java.util.ArrayList"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="ISO-8859-1"%>
 <!DOCTYPE html>
 <html lang="es">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Banco UTN - Préstamos Activos</title>
+    <title>Préstamos activos</title>
     <style>
-        * {
-            box-sizing: border-box;
-        }
+        .container {
+		    max-width: 1400px;  
+		    margin: 0 auto;
+		    padding: 15px;
+		}
+		.table {
+			background-color: #fff;
+			border-radius: 8px;
+			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+		}
+		.table.table-striped th, 
+		.table.table-striped td {
+	    	padding: 21.5px !important;
+	    	vertical-align: middle !important;
+		}
+		.text-danger {
+			color: #dc3545 !important;
+		}
+		.text-success {
+			color: #28a745 !important;
+		}
+		.table-striped tbody tr:nth-of-type(odd) {
+			background-color: #f8f9fa;
+		}
+		.table-striped tbody tr:hover {
+			background-color: #f1f1f1;
+		}
+		.table-responsive {
+			overflow-x: auto;
+		}
+		.table th {
+			text-align: center;
+		}
+		.table td {
+			text-align: center;
+		}
 
-        .navbar {
-            background-color: #004b93;
-            color: white;
-            padding: 1rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-        }
-
-        .navbar-brand {
-            font-size: 1.2rem;
-            font-weight: bold;
-        }
-
-        .logout-btn {
-            background-color: #39a9b3;
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .sidebar {
-            width: 200px;
-            background-color: #f5f5f5;
-            height: calc(100vh - 56px);
-            padding: 1rem;
-            float: left;
-        }
-
-        .menu-item {
-            padding: 0.75rem;
-            display: flex;
-            align-items: center;
-            gap: 0.5rem;
-            cursor: pointer;
-            color: #333;
-            text-decoration: none;
-        }
-
-        .submenu {
-            margin-left: 1rem;
-        }
-
-        .submenu .menu-item {
-            padding: 0.5rem 0.75rem;
-        }
-
-        .menu-item.active {
-            background-color: #1a4f7c;
-            color: white;
-            border-radius: 4px;
-        }
-
-        .main-content {
-            margin-left: 200px;
-            padding: 2rem;
-        }
-
-        .page-title {
-            color: #333;
-            margin-bottom: 2rem;
-            font-size: 1.5rem;
-        }
-
-        table {
-            width: 100%;
-            border-collapse: collapse;
-            margin-top: 1rem;
-            background-color: white;
-        }
-
-        th, td {
-            padding: 0.75rem;
-            text-align: left;
-            border-bottom: 1px solid #ddd;
-        }
-
-        th {
-            font-weight: 600;
-            color: #333;
-        }
-
-        .pagination {
-            margin-top: 1rem;
-            display: flex;
-            gap: 0.5rem;
-            align-items: center;
-            font-size: 0.9rem;
-        }
-
-        .pagination a {
-            padding: 0.25rem 0.5rem;
-            text-decoration: none;
-            color: #004b93;
-        }
-
-        .pagination a.active {
-            background-color: #004b93;
-            color: white;
-            border-radius: 4px;
-        }
-
-        .prestamos-dropdown {
-            background-color: #1a4f7c;
-            color: white;
-            padding: 0.75rem;
-            border-radius: 4px;
-            margin-bottom: 0.5rem;
-        }
+		
+        .pagination-container {
+			display: flex;
+			justify-content: space-between;
+			align-items: center;
+			margin-top: 20px;
+		}
+		.pagination {
+			margin-top: 20px;
+		}
+		.pagination button {
+			background-color: #aac4ee;
+			border: none;
+			color: white;
+			padding: 8px 16px;
+			text-decoration: none;
+			font-size: 16px;
+			margin: 4px 2px;
+			cursor: pointer;
+			transition: background-color 0.3s ease;
+			border-radius: 2px;
+		}
+		.pagination button:hover {
+			background-color: #2F4E93;
+			color: white;
+		}
+		.pagination button.active {
+			text-color: white;
+			background-color: #2F4E93;
+			color: white;
+		}
+		.page-link {
+			color: #003b7a;
+			background-color: white;
+			border: 1px solid #dee2e6;
+		}
+		.page-link:hover {
+			background-color: #f0f0f0;
+			color: #0056b3;
+		}
+		.page-item.active .page-link {
+			background-color: #003b7a;
+			border-color: #003b7a;
+			color: white;
+		}
+		.page-item.disabled .page-link {
+			color: #6c757d;
+			pointer-events: none;
+			background-color: #fff;
+			border-color: #dee2e6;
+		}
+		.pagination-info {
+			margin-top: 5px;
+			display: inline-block;
+			margin-right: 20px;
+			font-size: 1rem; 
+			margin-right: auto; 
+		}
+		
     </style>
 	<%@ include file="Componentes/Head.jsp"%>
 </head>
 <body>
 	<%@ include file="Componentes/NavbarAdmin.jsp"%>
- 
-    <div class="main-content">
-        <h2 class="page-title">Préstamos activos</h2>
-        <table>
+	
+    <div class="container mt-5" style="margin-bottom: 40px;">
+        <h4 class="card-title text-left" style="margin-bottom: 40px;">Préstamos activos</h4>
+        <%
+            ArrayList<Prestamo> prestamosActivos = (ArrayList<Prestamo>) request.getAttribute("prestamosActivos");
+            if (prestamosActivos != null && !prestamosActivos.isEmpty()) {
+        %>
+        <table class="table table-striped table-hover">
             <thead>
                 <tr>
-                    <th>Nombre y apellido</th>
-                    <th>DNI</th>
-                    <th>Concepto</th>
+                    <th>Cliente</th>
+                    <th>Tipo de préstamo</th>
                     <th>Monto solicitado</th>
-                    <th>Deuda pendiente</th>
+                    <th>Monto a pagar</th>
+                    <th>Cuotas</th>
+                    <th>Cuotas pagas</th>
+                    <th>Fecha aprobación</th>
                 </tr>
             </thead>
             <tbody>
+                <%
+                    for (Prestamo prestamo : prestamosActivos) {
+                %>
                 <tr>
-                    <td>Armando Barreda</td>
-                    <td>3850005</td>
-                    <td>Hipotecario</td>
-                    <td>$50.000</td>
-                    <td>$41.666</td>
+                    <td><%= prestamo.getCliente().getNombre() + " " + prestamo.getCliente().getApellido()%></td>
+                    <td><%= prestamo.getTipoPrestamo().getNombreTipoPrestamo()%></td>
+                    <td>$<%= prestamo.getMontoPedido()%></td>
+                    <td>$<%= prestamo.getMontoAPagar()%></td>
+                    <td><%= prestamo.getCuotas()%></td>
+                    <td><%= prestamo.getCuotasPagas() %></td>
+                    <td><%= prestamo.getFecha()  %></td>
                 </tr>
-                <tr>
-                    <td>Bob Arnold</td>
-                    <td>6850005</td>
-                    <td>Personal</td>
-                    <td>$95.000</td>
-                    <td>$95.000</td>
-                </tr>
-                <tr>
-                    <td>Leo Pondo</td>
-                    <td>1241334</td>
-                    <td>Hipotecario</td>
-                    <td>$50.000</td>
-                    <td>$50.000</td>
-                </tr>
-                <tr>
-                    <td>Pepe Saenz</td>
-                    <td>4214141</td>
-                    <td>Vacaciones</td>
-                    <td>$35.000</td>
-                    <td>$35.000</td>
-                </tr>
-                <tr>
-                    <td>Ricardo Iorio</td>
-                    <td>9850005</td>
-                    <td>Vacaciones</td>
-                    <td>$195.000</td>
-                    <td>$162.500</td>
-                </tr>
+                <%
+                    }
+                %>
             </tbody>
         </table>
-        <div class="pagination">
-            <span>Mostrando página 1 de 3</span>
-            <a href="#" class="active">1</a>
-            <a href="#">2</a>
-            <a href="#">3</a>
-            <a href="#">Siguiente</a>
-        </div>
+        <%
+            Integer totalPrestamos = (Integer) request.getAttribute("totalPrestamos");
+            Integer totalPaginas = (Integer) request.getAttribute("totalPaginas");
+            Integer paginaActual = (Integer) request.getAttribute("paginaActual");
+            if (totalPrestamos > 5) {
+        %>
+        <nav aria-label="Paginación de préstamos" class="text-center" style="margin-top: 50px;">
+	        <ul class="pagination justify-content-center">
+	            <div class="pagination-info">
+	                Mostrando página <%=paginaActual%> de <%=totalPaginas%>
+	            </div>
+	            <li class="page-item <%=paginaActual == 1 ? "disabled" : ""%>">
+	                <a class="page-link"
+	                   <%=paginaActual == 1 ? "" : "href='AdminPrestamosActivosSv?page=" + (paginaActual - 1) + "&pageSize=5'"%>>
+	                    Anterior 
+	                </a>
+	            </li>
+	
+	            <%
+	                int startPage = Math.max(1, paginaActual - 1);
+	                int endPage = Math.min(totalPaginas, startPage + 2);
+	
+	                if (endPage - startPage < 2) {
+	                    startPage = Math.max(1, endPage - 2);
+	                }
+	
+	                if (startPage > 1) {
+	            %>
+	            <li class="page-item">
+	                <a class="page-link" href="AdminPrestamosActivosSv?page=1&pageSize=5">1</a>
+	            </li>
+	            <li class="page-item disabled">
+	                <span class="page-link">...</span>
+	            </li>
+	            <%
+	                }
+	
+	                for (int i = startPage; i <= endPage; i++) {
+	            %>
+	            <li class="page-item <%=i == paginaActual ? "active" : ""%>">
+	                <a class="page-link" href="AdminPrestamosActivosSv?page=<%=i%>&pageSize=5">
+	                    <%=i%>
+	                </a>
+	            </li>
+	            <%
+	                }
+	
+	                if (endPage < totalPaginas) {
+	            %>
+	            <li class="page-item disabled">
+	                <span class="page-link">...</span>
+	            </li>
+	            <li class="page-item">
+	                <a class="page-link" href="AdminPrestamosActivosSv?page=<%=totalPaginas%>&pageSize=5">
+	                    <%=totalPaginas%>
+	                </a>
+	            </li>
+	            <%
+	                }
+	            %>
+	
+	            <li class="page-item <%=paginaActual == totalPaginas ? "disabled" : ""%>">
+	                <a class="page-link"
+	                   <%=paginaActual == totalPaginas ? "" : "href='AdminPrestamosActivosSv?page=" + (paginaActual + 1) + "&pageSize=5'"%>>
+	                    Siguiente 
+	                </a>
+	            </li>
+	        </ul>
+	    </nav>
+        <%
+            }
+        %>
+        <%
+            } else {
+        %>
+        <p class="text-center">No se registraron préstamos activos.</p>
+        <%
+            }
+        %>
     </div>
+
 </body>
 </html>

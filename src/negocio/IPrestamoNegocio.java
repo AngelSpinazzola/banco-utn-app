@@ -13,4 +13,7 @@ public interface IPrestamoNegocio {
 	public boolean solicitarPrestamo(Prestamo prestamo, int idCuenta);
 	public ArrayList<Prestamo> getSolicitudesDePrestamos(int page, int pageSize);
 	public boolean rechazarPrestamo(int idPrestamo);
+	public boolean aprobarPrestamo(int idPrestamo);
+	public int getTotalPrestamosActivosCount();
+	public ArrayList<Prestamo> getPrestamosActivos(int page, int pageSize);
 }

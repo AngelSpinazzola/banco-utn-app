@@ -27,7 +27,6 @@ public class MovimientoDaoImpl implements IMovimientoDao {
 	        statement.setString(2, movimiento.getDetalle());
 	        statement.setBigDecimal(3, movimiento.getMonto());
 	        
-	        // Si el ID emisor es null, es un movimiento emitido por un administrador.
 	        if (movimiento.getIdCuentaEmisor() != null) {
 	            statement.setInt(4, movimiento.getIdCuentaEmisor());
 	        } else {
@@ -50,33 +49,34 @@ public class MovimientoDaoImpl implements IMovimientoDao {
 		int offset = (page - 1) * pageSize;
 		
 		String query = "SELECT \r\n" + 
-				"    cu.NumeroCuenta AS numeroCuenta,\r\n" + 
-				"    m.IDMovimiento AS idMovimiento,\r\n" + 
-				"    -- Solo muestra el detalle \"Traspaso de dinero entre cuentas\" si ambas cuentas son del mismo cliente\r\n" + 
-				"    CASE \r\n" + 
-				"        WHEN m.IDCuentaEmisor = cu.IDCuenta \r\n" + 
-				"            AND cu.IDCliente = (SELECT IDCliente FROM CUENTAS WHERE IDCuenta = m.IDCuentaReceptor) THEN 'Traspaso de dinero entre cuentas'\r\n" + 
-				"        ELSE \r\n" + 
-				"            -- En caso contrario, el detalle corresponde al detalle de origen o destino\r\n" + 
-				"            CASE \r\n" + 
-				"                WHEN m.IDCuentaEmisor = cu.IDCuenta THEN m.DetalleOrigen\r\n" + 
-				"                ELSE m.DetalleDestino\r\n" + 
-				"            END\r\n" + 
-				"    END AS detalle,\r\n" + 
-				"    m.Fecha AS fecha,\r\n" + 
-				"    m.Importe AS importe,\r\n" + 
-				"    m.IDCuentaReceptor AS idCuentaReceptor,\r\n" + 
-				"    tm.IDTipoMovimiento AS idTipo,\r\n" + 
-				"    tm.Nombre AS nombreTipo\r\n" + 
-				"FROM movimientos m\r\n" + 
-				"INNER JOIN tipo_movimientos tm ON tm.IDTipoMovimiento = m.IDTipoMovimiento\r\n" + 
-				"INNER JOIN cuentas cu ON cu.IDCuenta IN (m.IDCuentaEmisor, m.IDCuentaReceptor)\r\n" + 
-				"WHERE cu.IDCliente = ?\r\n" + 
-				"GROUP BY m.IDMovimiento\r\n" + 
-				"ORDER BY m.Fecha DESC\r\n" + 
-				"LIMIT ? OFFSET ?;\r\n" + 
-				"";
-
+			    "    cu.NumeroCuenta AS numeroCuenta,\r\n" + 
+			    "    m.IDMovimiento AS idMovimiento,\r\n" + 
+			    "    CASE \r\n" + 
+			    "        WHEN m.IDTipoMovimiento = 2 THEN m.DetalleDestino\r\n" + 
+			    "        ELSE \r\n" + 
+			    "            CASE \r\n" + 
+			    "                WHEN m.IDCuentaEmisor = cu.IDCuenta \r\n" + 
+			    "                    AND cu.IDCliente = (SELECT IDCliente FROM CUENTAS WHERE IDCuenta = m.IDCuentaReceptor) THEN 'Traspaso de dinero entre cuentas'\r\n" + 
+			    "                ELSE \r\n" + 
+			    "                    CASE \r\n" + 
+			    "                        WHEN m.IDCuentaEmisor = cu.IDCuenta THEN m.DetalleOrigen\r\n" + 
+			    "                        ELSE m.DetalleDestino\r\n" + 
+			    "                    END\r\n" + 
+			    "            END\r\n" + 
+			    "    END AS detalle,\r\n" + 
+			    "    m.Fecha AS fecha,\r\n" + 
+			    "    m.Importe AS importe,\r\n" + 
+			    "    m.IDCuentaReceptor AS idCuentaReceptor,\r\n" + 
+			    "    tm.IDTipoMovimiento AS idTipo,\r\n" + 
+			    "    tm.Nombre AS nombreTipo\r\n" + 
+			    "FROM movimientos m\r\n" + 
+			    "INNER JOIN tipo_movimientos tm ON tm.IDTipoMovimiento = m.IDTipoMovimiento\r\n" + 
+			    "INNER JOIN cuentas cu ON cu.IDCuenta IN (m.IDCuentaEmisor, m.IDCuentaReceptor)\r\n" + 
+			    "LEFT JOIN prestamos p ON p.IDCuenta = cu.IDCuenta AND m.IDTipoMovimiento = 2\r\n" + 
+			    "WHERE cu.IDCliente = ?\r\n" + 
+			    "GROUP BY m.IDMovimiento\r\n" + 
+			    "ORDER BY m.Fecha DESC\r\n" + 
+			    "LIMIT ? OFFSET ?;\r\n";
 
 		try (Connection conn = Conexion.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
 	        ps.setInt(1, idCliente);          

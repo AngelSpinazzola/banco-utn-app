@@ -2,9 +2,8 @@
 <%@ page import="entidad.Prestamo"%>
 <%@ page import="java.util.ArrayList"%>
 <!DOCTYPE html>
-<html lang="es"><meta charset="UTF-8">
+<html lang="es">
 <head>
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Solicitudes de préstamos</title>
     <style>
 	   	.container {
@@ -17,9 +16,10 @@
 			border-radius: 8px;
 			box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 		}
-		.table th, .table td {
-			vertical-align: middle;
-			padding: 12px 15px;
+		.table.table-striped th, 
+		.table.table-striped td {
+	    	padding: 16px !important;
+	    	vertical-align: middle !important;
 		}
 		.text-danger {
 			color: #dc3545 !important;
@@ -260,8 +260,23 @@
 	        }
 	    %>
 	</div>
+	
 	<script>
-
+	 <% 
+     String prestamoAprobado = (String) request.getAttribute("prestamoAprobado");
+     	if (prestamoAprobado != null && !prestamoAprobado.isEmpty()) { 
+	 %>
+	     Swal.fire({
+	         icon: 'success', 
+	         title: 'Éxito',
+	         text: '<%= prestamoAprobado %>',
+	         confirmButtonText: 'Aceptar'
+	     }).then((result) => {
+	         if (result.isConfirmed) {
+	             window.location.href = "AdminSolicitudesPrestamosSv"; 
+	         }
+	     });
+	 <% } %>
 	  <% 
 	   	String prestamoRechazado = (String) request.getAttribute("prestamoRechazado");
 	   	if (prestamoRechazado != null && !prestamoRechazado.isEmpty()) { 
