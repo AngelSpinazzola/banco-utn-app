@@ -7,6 +7,7 @@ import excepciones.ClienteNegocioException;
 public interface IClienteNegocio {
 	public boolean agregarCliente(Cliente cliente);
 	public boolean editarCliente(Cliente cliente);
+	public boolean eliminarCliente(int idCliente);
 	public ArrayList<Cliente> listarClientes(int page, int pageSize);
 	public int getTotalClientesCount();
 	public int calcularTotalPaginas(int pageSize);

@@ -28,7 +28,7 @@ public class ListarClientesSv extends HttpServlet {
         String pageSizeParam = request.getParameter("pageSize");
 
         int page = (pageParam != null && !pageParam.isEmpty()) ? Integer.parseInt(pageParam) : 1;
-        int pageSize = (pageSizeParam != null && !pageSizeParam.isEmpty()) ? Integer.parseInt(pageSizeParam) : 8;
+        int pageSize = (pageSizeParam != null && !pageSizeParam.isEmpty()) ? Integer.parseInt(pageSizeParam) : 6;
 
         ArrayList<Cliente> listaClientes = iClienteNegocio.listarClientes(page, pageSize);
 
@@ -38,6 +38,7 @@ public class ListarClientesSv extends HttpServlet {
         request.setAttribute("listaClientes", listaClientes);
         request.setAttribute("totalPages", totalPages);
         request.setAttribute("currentPage", page);
+        request.setAttribute("totalClientes", totalClientes);
 
         request.getRequestDispatcher("/AdminGestionClientes.jsp").forward(request, response);
     }

@@ -162,7 +162,7 @@
 	                <td><%=prestamo.getCuotas()%></td>
 	                <td><%=prestamo.getFecha()%></td>
 	                <td>
-	                     <form action="AdminSolicitudesPrestamosSv" method="post" style="display:inline;">
+	                    <form action="AdminSolicitudesPrestamosSv" method="post" style="display:inline;">
 					        <input type="hidden" name="idPrestamo" value="<%=prestamo.getIdPrestamo()%>">
 					        <input type="hidden" name="accion" value="aprobar">
 					        <button type="submit" class="btn btn-outline-success">Aprobar</button>

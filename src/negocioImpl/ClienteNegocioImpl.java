@@ -33,6 +33,13 @@ public class ClienteNegocioImpl implements IClienteNegocio {
 
 		return resultado;
 	}
+	
+	@Override
+	public boolean eliminarCliente(int idCliente) {
+		boolean resultado = iClienteDao.eliminarCliente(idCliente);
+		
+		return resultado;
+	}
 
 	@Override
 	public ArrayList<Cliente> listarClientes(int page, int pageSize) {

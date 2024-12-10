@@ -113,7 +113,28 @@ public class ClienteDaoImpl implements IClienteDao {
 	        }
 	    }
 	}
-
+	
+	@Override
+	public boolean eliminarCliente(int idCliente) {
+		String query = "update clientes set Estado = 0 where IDCliente = ?";
+		
+		boolean resultado = false;
+	    
+	    try (Connection conexion = Conexion.getConnection();
+	         PreparedStatement statement = conexion.prepareStatement(query)) {
+	         
+	        statement.setInt(1, idCliente);
+	        
+	        int filasAfectadas = statement.executeUpdate();
+	        
+	        if (filasAfectadas > 0) {
+	            resultado = true;
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace(); 
+	    }
+	    return resultado;
+	}
 
 	@Override
 	public ArrayList<Cliente> listarClientes(int page, int pageSize) {
