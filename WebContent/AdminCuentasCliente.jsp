@@ -1,5 +1,6 @@
 <%@ page import="entidad.Cliente"%>
 <%@ page import="entidad.Cuenta"%>
+<%@ page import="entidad.TipoCuenta"%>
 <%@ page import="entidad.Prestamo"%>
 <%@ page import="java.util.ArrayList"%>
 <%@ page language="java" contentType="text/html; charset=ISO-8859-1"
@@ -277,15 +278,24 @@ h3, h5 {
 
 			<div class="crear-cuenta p-3 border rounded">
 				<h5>Crear cuenta</h5>
-				<div class="mb-3">
-					<label for="tipoCuenta" class="form-label">Seleccioná un
-						tipo de cuenta</label> <select id="tipoCuenta" class="form-select">
-						<option value="cajaAhorro" selected>Caja de ahorro</option>
-						<option value="cuentaCorriente">Cuenta corriente</option>
-					</select>
-				</div>
-				<button class="btn btn-success w-100 btn-general">Crear
-					cuenta</button>
+				<form action="AdminCuentasClienteSv" method="post">
+					<div class="mb-3">
+						<input type="hidden" name="action" value="agregarCuenta">
+						<input type="hidden" name="idCliente" value="<%=cliente.getIdCliente()%>">
+						<label for="tipo-cuenta" class="form-label">Seleccioná un tipo de cuenta</label> 
+						<select class="form-select" name="idTipoCuenta">
+							<%
+								ArrayList<TipoCuenta> listaTipoCuentas = (ArrayList<TipoCuenta>) request.getAttribute("listaTipoCuentas");
+								for (TipoCuenta tipoCuenta : listaTipoCuentas){
+							%>
+							<option value=<%= tipoCuenta.getIdTipoCuenta() %>><%= tipoCuenta.getTipo() %></option>
+							<%
+								}
+							%>
+						</select>
+					</div>
+					<button class="btn btn-success w-100 btn-general">Crear cuenta</button>
+				</form>
 			</div>
 		</div>
 	</form>
@@ -366,11 +376,10 @@ h3, h5 {
 	src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
 <script>
         document.addEventListener('DOMContentLoaded', function () {
-        	// Obtengo el parámetro 'resultado' de la URL
             const urlParams = new URLSearchParams(window.location.search);
             const resultado = urlParams.get('resultado');
-
-            // Muestro el mensaje según el resultado
+            const resultadoCreacion = urlParams.get('resultadoCreacion');
+            
             if (resultado !== null) {
                 switch (parseInt(resultado)) {
                     case 0:
@@ -391,6 +400,13 @@ h3, h5 {
                         break;
                     case 2:
                         Swal.fire({
+                            icon: 'warning',
+                            text: 'La cuenta tiene saldo, no se puede eliminar',
+                            confirmButtonText: 'Aceptar'
+                        });
+                        break;
+                    case 3:
+                        Swal.fire({
                             icon: 'error',
                             title: 'Error',
                             text: 'Ocurrió un error al intentar eliminar la cuenta.',
@@ -401,6 +417,37 @@ h3, h5 {
                         console.warn('Resultado no esperado:', resultado);
                 }
             }
+            
+        	if (resultadoCreacion !== null) {
+	            switch (resultadoCreacion) {
+	                case '1':
+	                    Swal.fire({
+	                        icon: 'success',
+	                        title: 'Cuenta creada',
+	                        text: 'La cuenta se creó correctamente.',
+	                        confirmButtonText: 'Aceptar'
+	                    });
+	                    break;
+	                case '2':
+	                    Swal.fire({
+	                        icon: 'error',
+	                        title: 'Error',
+	                        text: 'Ocurrió un error al intentar crear la cuenta.',
+	                        confirmButtonText: 'Aceptar'
+	                    });
+	                    break;
+	                case '3':
+	                    Swal.fire({
+	                        icon: 'warning',
+	                        title: 'Límite de cuentas alcanzado',
+	                        text: 'El usuario ya tiene 3 cuentas, no se puede agregar más.',
+	                        confirmButtonText: 'Aceptar'
+	                    });
+	                    break;
+	                default:
+	                    console.warn('Resultado de creación no esperado:', resultadoCreacion);
+	            }
+        	}
         	
         	const modalModificarSaldo = new bootstrap.Modal(document.getElementById('modalModificarSaldo'));
             const botonesModificar = document.querySelectorAll('.btn-outline-primary, .btn-outline-success');

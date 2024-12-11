@@ -191,7 +191,7 @@ public class PrestamoDaoImpl implements IPrestamoDao {
 	
 	@Override
 	public int getPrestamosPorCuenta(int idCuenta) {
-		String query = "select count(*) from prestamos where IDCuenta = ?";
+		String query = "select count(*) from prestamos where IDCuenta = ? and Estado = 1";
 		
 		int totalPrestamos = 0;
 		

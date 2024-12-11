@@ -197,7 +197,7 @@ BEGIN
         c.Nombre AS nombre,
         c.Apellido AS apellido,
         c.Estado AS estado,
-        COUNT(cu.IDCuenta) AS cantCuentas
+        COUNT(CASE WHEN cu.Estado = 1 THEN 1 END) AS cantCuentas
     FROM 
         clientes c
     LEFT JOIN 
@@ -642,6 +642,21 @@ BEGIN
 END //
 
 DELIMITER ;
+
+-- Procedure para creacion de cuenta del cliente
+DELIMITER $$
+
+CREATE PROCEDURE SP_CrearCuenta(
+    IN p_IDCliente INT,
+    IN p_IDTipoCuenta INT
+)
+BEGIN
+    INSERT INTO Cuentas (IDCliente, FechaCreacion, NumeroCuenta, CBU, Saldo, IDTipoCuenta)
+    VALUES (p_IDCliente, CURDATE(), NULL, NULL, 10000, p_IDTipoCuenta);  
+END$$
+
+DELIMITER ;
+
 
 
 -- Inserts para la tabla NACIONALIDADES

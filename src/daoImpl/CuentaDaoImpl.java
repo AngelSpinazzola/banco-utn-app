@@ -53,6 +53,29 @@ public class CuentaDaoImpl implements ICuentaDao {
 	}
 	
 	@Override
+	public int agregarCuenta(int idCliente, int idTipoCuenta) {
+		ArrayList<Cuenta> cuentas = getCuentasDelCliente(idCliente);
+		
+		if(cuentas.size() == 3) {
+			return 3; // Tiene 3 cuentas, no se puede crear
+		}
+		
+		String query = "{CALL SP_CrearCuenta(?,?)}";
+		
+		try (Connection cn = Conexion.getConnection(); CallableStatement cs = cn.prepareCall(query)) {
+			cs.setInt(1, idCliente);
+			cs.setInt(2, idTipoCuenta);
+
+			cs.executeUpdate();  
+	       
+	        return 1; 
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+		return 2;
+	}
+	
+	@Override
 	public boolean modificarSaldo(int idCuenta, BigDecimal saldo) {
 	    String query = "UPDATE cuentas SET Saldo = ? WHERE NumeroCuenta = ? AND ESTADO = 1";
 	    boolean isUpdated = false;
@@ -75,13 +98,20 @@ public class CuentaDaoImpl implements ICuentaDao {
 	
 	@Override
 	public int eliminarCuenta(int idCuenta) {
-		String query = "delete from cuentas where IDCuenta = ?";
+		String query = "update Cuentas set Estado = 0 where IDCuenta = ?";
 		IPrestamoDao iPrestamoDao = new PrestamoDaoImpl();
 		
 		int prestamosPorCuenta = iPrestamoDao.getPrestamosPorCuenta(idCuenta);
 		
 		if(prestamosPorCuenta > 0) {
-			return 1; //Tiene prestamos la cuenta, por ende no puede eliminarse
+			return 1; //Tiene prestamos la cuenta
+		}
+		
+		BigDecimal monto = getSaldoCuentaCliente(idCuenta);
+		BigDecimal cero = new BigDecimal("0");
+		
+		if (monto.compareTo(cero) > 0) {
+		    return 2; // La cuenta tiene saldo superior a 0
 		}
 		
 		try (Connection cn = Conexion.getConnection(); PreparedStatement ps = cn.prepareStatement(query)){
@@ -95,8 +125,29 @@ public class CuentaDaoImpl implements ICuentaDao {
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return 2; //Error
+		return 3; //Error
 	}
+	
+	@Override
+	public BigDecimal getSaldoCuentaCliente(int idCuenta) {
+	    String query = "SELECT saldo FROM cuentas WHERE idcuenta = ?";
+	    BigDecimal saldo = BigDecimal.ZERO;
+	      
+	    try (Connection conn = Conexion.getConnection(); 
+	         PreparedStatement ps = conn.prepareStatement(query)) {
+	        ps.setInt(1, idCuenta);
+	        ResultSet rs = ps.executeQuery();
+	        
+	        if (rs.next()) {
+	            saldo = rs.getBigDecimal("saldo");
+	        }
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return saldo;
+	}
+
 	
 	@Override
 	public boolean validarSaldo(BigDecimal monto, String cbuOrigen) {

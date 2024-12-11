@@ -6,6 +6,7 @@ import entidad.Cuenta;
 
 public interface ICuentaNegocio {
 	public ArrayList<Cuenta> getCuentasDelCliente(int idCliente);
+	public int agregarCuenta(int idCliente, int idTipoCuenta);
 	public boolean modificarSaldo(int idCuenta, BigDecimal saldoNuevo);
 	public int eliminarCuenta(int idCuenta);
 	public int validarTransferencia(String cbuOrigen, String cbuDestino, String monto);

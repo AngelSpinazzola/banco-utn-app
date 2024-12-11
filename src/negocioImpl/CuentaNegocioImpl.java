@@ -18,6 +18,13 @@ public class CuentaNegocioImpl implements ICuentaNegocio{
 	}
 	
 	@Override
+	public int agregarCuenta(int idCliente, int idTipoCuenta) {
+		int resultado = iCuentaDao.agregarCuenta(idCliente, idTipoCuenta);
+		
+		return resultado; 
+	}
+	
+	@Override
 	public boolean modificarSaldo(int idCuenta, BigDecimal saldoNuevo) {
 		
 		boolean resultado = iCuentaDao.modificarSaldo(idCuenta, saldoNuevo);
@@ -27,7 +34,7 @@ public class CuentaNegocioImpl implements ICuentaNegocio{
 	
 	@Override
 	public int eliminarCuenta(int idCuenta) {
-		int resultado = iCuentaDao.eliminarCuenta(idCuenta); // devuelve 0 si se elimino, 1 si tiene prestamos, y 2 error
+		int resultado = iCuentaDao.eliminarCuenta(idCuenta); 
 		
 		return resultado;
 	}
@@ -43,7 +50,6 @@ public class CuentaNegocioImpl implements ICuentaNegocio{
 	        return -2; //Si el monto no es válido, retorna un código de error -2 
 	    }
 		
-		// Si el monto es válido, lo convertimos a BigDecimal
 	    BigDecimal montoBigDecimal = new BigDecimal(monto);
 		
 		if (!validarSaldo(montoBigDecimal, cbuOrigen)) {
