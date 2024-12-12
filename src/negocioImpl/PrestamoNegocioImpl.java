@@ -37,6 +37,11 @@ public class PrestamoNegocioImpl implements IPrestamoNegocio{
 	}
 	
 	@Override
+	public int getTotalPrestamosActivosPorCliente(int idCliente) {
+		return iPrestamoDao.getTotalPrestamosActivosPorCliente(idCliente);
+	}
+	
+	@Override
 	public int calcularTotalPaginas(int idCliente, int pageSize) {
 	    int totalPrestamos = getTotalPrestamosCount(idCliente); 
 	    return (int) Math.ceil((double) totalPrestamos / pageSize);

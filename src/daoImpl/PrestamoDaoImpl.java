@@ -16,59 +16,83 @@ public class PrestamoDaoImpl implements IPrestamoDao {
 
 	@Override
 	public ArrayList<Prestamo> getPrestamosPorCliente(int idCliente, int page, int pageSize) {
-		ArrayList<Prestamo> prestamos = new ArrayList<>();
+	    ArrayList<Prestamo> prestamos = new ArrayList<>();
 
-		int offset = (page - 1) * pageSize;
+	    int offset = (page - 1) * pageSize;
 
-		String query = "SELECT \r\n" + 
-				"    p.IDPrestamo AS idPrestamo,\r\n" + 
-				"    p.IDTipoPrestamo AS idTipoPrestamo,\r\n" + 
-				"    p.MontoPedido AS montoPedido,\r\n" + 
-				"    p.ImporteAPagar AS importeAPagar,\r\n" + 
-				"    p.Cuotas AS cuotas,\r\n" + 
-				"    p.Fecha AS fecha,\r\n" + 
-				"    p.Estado AS estado,\r\n" + 
-				"    tp.Tipo AS tipoPrestamo,\r\n" + 
-				"    tp.TNA AS tna\r\n" + 
-				"FROM prestamos p\r\n" + 
-				"INNER JOIN cuentas cu ON cu.IDCuenta = p.IDCuenta\r\n" + 
-				"INNER JOIN clientes c ON c.IDCliente = cu.IDCliente\r\n" + 
-				"INNER JOIN tipo_prestamos tp ON tp.IDTipoPrestamo = p.IDTipoPrestamo\r\n" + 
-				"WHERE cu.IDCliente = ? \r\n" + 
-				"LIMIT ? OFFSET ?\r\n" + 
-				"";
+	    String query = "SELECT \r\n" + 
+	            "    p.IDPrestamo AS idPrestamo,\r\n" + 
+	            "    p.IDTipoPrestamo AS idTipoPrestamo,\r\n" + 
+	            "    p.MontoPedido AS montoPedido,\r\n" + 
+	            "    p.ImporteAPagar AS importeAPagar,\r\n" + 
+	            "    p.Cuotas AS cuotasTotales,\r\n" + 
+	            "    (SELECT COUNT(*) FROM plazos WHERE plazos.IDPrestamo = p.IDPrestamo AND plazos.Estado = 1) AS cuotasAbonadas,\r\n" + 
+	            "    p.Fecha AS fechaAlta,\r\n" + 
+	            "    p.Estado AS estado,\r\n" + 
+	            "    tp.Tipo AS nombreTipoPrestamo,\r\n" + 
+	            "    tp.TNA AS tna\r\n" + 
+	            "FROM prestamos p\r\n" + 
+	            "INNER JOIN cuentas cu ON cu.IDCuenta = p.IDCuenta\r\n" + 
+	            "INNER JOIN clientes c ON c.IDCliente = cu.IDCliente\r\n" + 
+	            "INNER JOIN tipo_prestamos tp ON tp.IDTipoPrestamo = p.IDTipoPrestamo\r\n" + 
+	            "WHERE cu.IDCliente = ? AND p.Estado = 1\r\n" + 
+	            "LIMIT ? OFFSET ?\r\n";
 
-		try (Connection conn = Conexion.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
-			ps.setInt(1, idCliente);
-			ps.setInt(2, pageSize);
-			ps.setInt(3, offset);
-			ResultSet rs = ps.executeQuery();
+	    try (Connection conn = Conexion.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+	        ps.setInt(1, idCliente);
+	        ps.setInt(2, pageSize);
+	        ps.setInt(3, offset);
+	        ResultSet rs = ps.executeQuery();
 
-			while (rs.next()) {
-				Prestamo prestamo = new Prestamo();
-				TipoPrestamo tipoPrestamo = new TipoPrestamo();
-				
-				prestamo.setIdPrestamo(rs.getInt("idPrestamo"));
-				prestamo.setMontoAPagar(rs.getBigDecimal("importeAPagar"));
-				prestamo.setMontoPedido(rs.getBigDecimal("montoPedido"));
-				prestamo.setCuotas(rs.getInt("cuotas"));
-				prestamo.setFecha(rs.getDate("fecha"));
-				prestamo.setEstado(rs.getInt("estado"));
-				
-				tipoPrestamo.setIdTipoPrestamo(rs.getInt("idTipoPrestamo"));
-				tipoPrestamo.setNombreTipoPrestamo(rs.getString("tipoPrestamo"));
-				tipoPrestamo.setTna(rs.getBigDecimal("tna"));
-				
-				prestamo.setTipoPrestamo(tipoPrestamo);
-				
-				prestamos.add(prestamo);
+	        while (rs.next()) {
+	            Prestamo prestamo = new Prestamo();
+	            TipoPrestamo tipoPrestamo = new TipoPrestamo();
+
+	            prestamo.setIdPrestamo(rs.getInt("idPrestamo"));
+	            prestamo.setMontoAPagar(rs.getBigDecimal("importeAPagar"));
+	            prestamo.setMontoPedido(rs.getBigDecimal("montoPedido"));
+	            prestamo.setCuotas(rs.getInt("cuotasTotales"));
+	            prestamo.setCuotasPagas(rs.getInt("cuotasAbonadas"));
+	            prestamo.setFecha(rs.getDate("fechaAlta"));
+	            prestamo.setEstado(rs.getInt("estado"));
+
+	            tipoPrestamo.setIdTipoPrestamo(rs.getInt("idTipoPrestamo"));
+	            tipoPrestamo.setNombreTipoPrestamo(rs.getString("nombreTipoPrestamo"));
+	            tipoPrestamo.setTna(rs.getBigDecimal("tna"));
+
+	            prestamo.setTipoPrestamo(tipoPrestamo);
+
+	            prestamos.add(prestamo);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return prestamos;
+	}
+	
+	@Override
+	public int getTotalPrestamosActivosPorCliente(int idCliente) {
+		String query = "select count(*) from prestamos p inner join cuentas cu on cu.IDCuenta = p.IDCuenta inner join clientes c on c.IDCliente = cu.IDCliente where c.IDCliente = ? and p.Estado = 1";
+		
+		int totalPrestamos = 0;
+
+		try (Connection conexion = Conexion.getConnection();
+				PreparedStatement statement = conexion.prepareStatement(query)) {
+
+			statement.setInt(1, idCliente);
+
+			try (ResultSet rs = statement.executeQuery()) {
+				if (rs.next()) {
+					totalPrestamos = rs.getInt(1); 
+				}
 			}
+
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
-		return prestamos;
+		return totalPrestamos;
+		
 	}
-
 	@Override
 	public int getTotalPrestamosCount(int idCliente) {
 		String query = "select count(*) from prestamos p\r\n" + 

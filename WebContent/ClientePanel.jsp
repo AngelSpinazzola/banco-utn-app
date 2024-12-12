@@ -317,7 +317,7 @@ body {
 							<td><%=movimiento.getIdCuentaReceptor()%></td>
 							<td><%=movimiento.getTipoMovimiento().getNombre()%></td>
 							<td><%=movimiento.getDetalle()%></td>
-							<td><%=movimiento.getMonto()%></td>
+							<td class="monto"><span class="signo-dolar">$</span><%= movimiento.getMonto() %></td>
 							<td><%=movimiento.getFecha()%></td>
 						</tr>
 						<%

@@ -155,8 +155,7 @@
 				<a class="sub-btn"><i class="fas fa-wallet"></i>Préstamos<i class="fas fa-angle-right dropdown"></i></a>
 				<div class="sub-menu">
 					<a href="ClienteSolicitudPrestamoSv"class="sub-item"><i class="fa-solid fa-hand-holding-dollar"></i>Solicita tu préstamo</a> 
-					<a href="ClientePagarCuotas.jsp"class="sub-item"><i class="fa-solid fa-coins"></i>Paga tus cuotas</a>
-					<a href="ClienteResumenPrestamos.jsp" class="sub-item"><i class="fa-solid fa-file-invoice-dollar"></i>Resumen de préstamos</a> 
+					<a href="ClientePrestamosSv"class="sub-item"><i class="fa-solid fa-coins"></i>Mis préstamos</a>
 				</div>
 			</div>
 		</div>

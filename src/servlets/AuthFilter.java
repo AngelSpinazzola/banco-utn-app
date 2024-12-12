@@ -25,8 +25,7 @@ public class AuthFilter implements Filter {
 		String uri = req.getRequestURI();
 
 		// Permite acceso sin autenticación a Home.jsp, Login.jsp, ServletLogin, Error.jsp y recursos estáticos
-		if (uri.contains("Login.jsp") || uri.contains("ServletLogin")
-				|| uri.contains("Error.jsp") || uri.contains("/Images/") || uri.contains("/Css/")) {
+		if (uri.contains("Login.jsp") || uri.contains("ServletLogin") ||  uri.contains("Error.jsp") || uri.contains("/Images/") || uri.contains("/Css/")) {
 			chain.doFilter(request, response);
 			return;
 		}
@@ -57,10 +56,9 @@ public class AuthFilter implements Filter {
 		}
 
 		// Verifica el acceso a páginas de cliente
-		if ((uri.contains("ClientePanel.jsp") || uri.contains("ClienteDatos.jsp")
-				|| uri.contains("ClienteMovimientos.jsp") || uri.contains("ClienteSolicitarPrestamo.jsp") || uri.contains("ClienteTransferir.jsp")
-				|| uri.contains("MisPrestamos.jsp") || uri.contains("PagarCuotas.jsp") || uri.contains("Prestamos.jsp"))
-				&& usuario.getTipo().codigo != 2) {
+		if ((uri.contains("ClienteDatos.jsp") || uri.contains("ClienteMovimientos.jsp")
+				|| uri.contains("ClientePanel.jsp") || uri.contains("ClientePrestamos.jsp") || uri.contains("ClienteSolicitarTransferencia.jsp")
+				|| uri.contains("ClienteTransferir.jsp")) && usuario.getTipo().codigo != 2) {
 			session.setAttribute("errorMsj", "Acceso no autorizado. Solo clientes pueden acceder a esta página.");
 			res.sendRedirect("Error.jsp");
 			return;

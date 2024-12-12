@@ -15,4 +15,5 @@ public interface IPrestamoDao {
 	public boolean aprobarPrestamo(int idPrestamo);
 	public int getTotalPrestamosActivosCount();
 	public ArrayList<Prestamo> getPrestamosActivos(int page, int pageSize);
+	public int getTotalPrestamosActivosPorCliente(int idCliente);
 }
