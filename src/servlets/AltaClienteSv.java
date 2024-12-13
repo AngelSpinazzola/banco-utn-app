@@ -24,10 +24,10 @@ import negocioImpl.ProvinciaNegocioImpl;
 @WebServlet("/AltaClienteSv")
 public class AltaClienteSv extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	INacionalidadNegocio iNacionalidadNegocio = new NacionalidadNegocioImpl();
-	IProvinciaNegocio iProvinciaNegocio = new ProvinciaNegocioImpl();
-	ILocalidadNegocio iLocalidadNegocio = new LocalidadNegocioImpl();
-	IClienteNegocio iClienteNegocio = new ClienteNegocioImpl();
+	private INacionalidadNegocio iNacionalidadNegocio = new NacionalidadNegocioImpl();
+	private IProvinciaNegocio iProvinciaNegocio = new ProvinciaNegocioImpl();
+	private ILocalidadNegocio iLocalidadNegocio = new LocalidadNegocioImpl();
+	private IClienteNegocio iClienteNegocio = new ClienteNegocioImpl();
 	
     public AltaClienteSv() {
         super();

@@ -1,7 +1,9 @@
 package excepciones;
 
 public class TransferenciaException extends Exception {
-    public TransferenciaException(String mensaje) {
+	private static final long serialVersionUID = 1L;
+
+	public TransferenciaException(String mensaje) {
         super(mensaje);
     }
 }

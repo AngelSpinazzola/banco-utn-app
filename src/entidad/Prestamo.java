@@ -2,6 +2,7 @@ package entidad;
 
 import java.math.BigDecimal;
 import java.sql.Date;
+import java.util.ArrayList;
 
 public class Prestamo{
 	private int idPrestamo;

@@ -14,4 +14,5 @@ public interface ICuentaNegocio {
 	public boolean validarSaldo(BigDecimal monto, String cbuOrigen);
 	public boolean validarCuentaDestino(String cbuDestino);
 	public boolean realizarTransferencia(String cbuOrigen, String cbuDestino, String monto);
+	public BigDecimal getSaldoCuentaCliente(int idCuenta);
 }	

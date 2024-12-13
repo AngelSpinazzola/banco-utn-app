@@ -20,8 +20,8 @@ import negocioImpl.PrestamoNegocioImpl;
 @WebServlet("/ClientePrestamosSv")
 public class ClientePrestamosSv extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    IPrestamoNegocio iPrestamoNegocio = new PrestamoNegocioImpl();
-    IClienteNegocio iClienteNegocio = new ClienteNegocioImpl();
+    private IPrestamoNegocio iPrestamoNegocio = new PrestamoNegocioImpl();
+    private IClienteNegocio iClienteNegocio = new ClienteNegocioImpl();
     
     public ClientePrestamosSv() {
         super();

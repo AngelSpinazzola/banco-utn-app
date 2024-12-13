@@ -62,7 +62,7 @@
   </filter-mapping>
   <filter-mapping>
     <filter-name>AuthFilter</filter-name>
-    <url-pattern>/PagarCuotas.jsp</url-pattern>
+    <url-pattern>/ClientePagarCuotas.jsp</url-pattern>
   </filter-mapping>
   <filter-mapping>
     <filter-name>AuthFilter</filter-name>

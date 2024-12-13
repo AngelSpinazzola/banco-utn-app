@@ -114,7 +114,7 @@ CREATE TABLE PLAZOS (
     FechaDePago DATE NULL,
     NroCuota INT NOT NULL,
     ImporteAPagarCuotas DECIMAL(10,2) NOT NULL,
-    Estado BIT NOT NULL,
+    Estado TINYINT NOT NULL DEFAULT 0, -- 0 Pendiente | 1 Pagada | 2 Vencida
     CONSTRAINT fk_Plazos_Prestamos FOREIGN KEY (IDPrestamo) REFERENCES PRESTAMOS(IDPrestamo),
     CONSTRAINT chk_Mes CHECK (MesQuePaga NOT REGEXP '[^a-zA-Z]'),
     CONSTRAINT chk_NroCuota CHECK (NroCuota REGEXP '^[0-9]+$')
@@ -654,6 +654,69 @@ BEGIN
     INSERT INTO Cuentas (IDCliente, FechaCreacion, NumeroCuenta, CBU, Saldo, IDTipoCuenta)
     VALUES (p_IDCliente, CURDATE(), NULL, NULL, 10000, p_IDTipoCuenta);  
 END$$
+
+DELIMITER ;
+
+--Procedure para pagar cuotas de préstamo
+DELIMITER //
+
+CREATE PROCEDURE SP_PagarPlazos(
+    IN p_IDPlazos VARCHAR(255),
+    IN p_IDCuenta INT
+)
+BEGIN
+    DECLARE v_TotalAPagar DECIMAL(10,2);
+    DECLARE v_SaldoCuenta DECIMAL(10,2);
+    
+    SET SQL_SAFE_UPDATES = 0;
+
+    SELECT SUM(ImporteAPagarCuotas) INTO v_TotalAPagar
+    FROM PLAZOS
+    WHERE FIND_IN_SET(IDPlazo, p_IDPlazos) > 0;
+    
+    SELECT Saldo INTO v_SaldoCuenta
+    FROM CUENTAS
+    WHERE IDCuenta = p_IDCuenta;
+    
+    IF v_SaldoCuenta >= v_TotalAPagar THEN
+        -- Iniciar una transacción
+        START TRANSACTION;
+        
+        UPDATE PLAZOS
+        SET 
+            Estado = 1,
+            FechaDePago = CURRENT_DATE
+        WHERE FIND_IN_SET(IDPlazo, p_IDPlazos) > 0;
+        
+        UPDATE CUENTAS
+        SET Saldo = Saldo - v_TotalAPagar
+        WHERE IDCuenta = p_IDCuenta;
+        
+        INSERT INTO MOVIMIENTOS (
+            Fecha, 
+            DetalleOrigen, 
+            DetalleDestino, 
+            Importe, 
+            IDCuentaEmisor, 
+            IDTipoMovimiento
+        ) VALUES (
+            CURRENT_DATE,
+            'Pago de Cuotas',
+            'Pago de Plazos',
+            v_TotalAPagar,
+            p_IDCuenta,
+            (SELECT IDTipoMovimiento FROM TIPO_MOVIMIENTOS WHERE Nombre = 'Pago de préstamo')
+        );
+        
+        COMMIT;
+        
+        SELECT 'Pago realizado exitosamente' AS Resultado, v_TotalAPagar AS MontopagadoTotal;
+    ELSE
+        SELECT 'Saldo insuficiente' AS Resultado, v_TotalAPagar AS MontoRequerido, v_SaldoCuenta AS SaldoActual;
+    END IF;
+
+    SET SQL_SAFE_UPDATES = 1;
+END //
 
 DELIMITER ;
 

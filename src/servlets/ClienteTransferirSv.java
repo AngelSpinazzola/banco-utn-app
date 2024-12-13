@@ -20,8 +20,8 @@ import negocioImpl.CuentaNegocioImpl;
 @WebServlet("/ClienteTransferirSv")
 public class ClienteTransferirSv extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    IClienteNegocio iClienteNegocio = new ClienteNegocioImpl();
-    ICuentaNegocio iCuentaNegocio = new CuentaNegocioImpl();
+	private IClienteNegocio iClienteNegocio = new ClienteNegocioImpl();
+	private ICuentaNegocio iCuentaNegocio = new CuentaNegocioImpl();
 	
     public ClienteTransferirSv() {
         super();
@@ -53,7 +53,6 @@ public class ClienteTransferirSv extends HttpServlet {
 
 	    int resultado = iCuentaNegocio.validarTransferencia(cbuOrigen, cbuDestino, monto);
 	    
-	    // Establecer un atributo para el mensaje de error
 	    switch(resultado) {
 	        case -1:
 	            request.setAttribute("errorTransferencia", "Los CBUs son iguales.");
@@ -69,7 +68,6 @@ public class ClienteTransferirSv extends HttpServlet {
 	            break;
 	    }
 
-	    // Si la transferencia es válida, se realiza
 	    if (resultado == 0) {
 	    	request.setAttribute("cbuOrigen", cbuOrigen);
 	        request.setAttribute("cbuDestino", cbuDestino);

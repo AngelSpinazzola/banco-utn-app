@@ -15,7 +15,7 @@ import negocioImpl.CuentaNegocioImpl;
 @WebServlet("/ClienteConfirmarTransferenciaSv")
 public class ClienteConfirmarTransferenciaSv extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-    ICuentaNegocio iCuentaNegocio = new CuentaNegocioImpl();
+    private ICuentaNegocio iCuentaNegocio = new CuentaNegocioImpl();
 
     public ClienteConfirmarTransferenciaSv() {
         super();

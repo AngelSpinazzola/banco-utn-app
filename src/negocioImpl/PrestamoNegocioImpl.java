@@ -42,6 +42,13 @@ public class PrestamoNegocioImpl implements IPrestamoNegocio{
 	}
 	
 	@Override
+	public boolean pagarCuotasPrestamo(int idCuenta, String cuotasAPagar) {
+		boolean resultado = iPrestamoDao.pagarCuotasPrestamo(idCuenta, cuotasAPagar);
+		
+		return resultado;
+	}
+	
+	@Override
 	public int calcularTotalPaginas(int idCliente, int pageSize) {
 	    int totalPrestamos = getTotalPrestamosCount(idCliente); 
 	    return (int) Math.ceil((double) totalPrestamos / pageSize);

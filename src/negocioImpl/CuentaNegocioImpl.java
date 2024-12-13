@@ -24,6 +24,12 @@ public class CuentaNegocioImpl implements ICuentaNegocio{
 		return resultado; 
 	}
 	
+	public BigDecimal getSaldoCuentaCliente(int idCuenta) {
+		BigDecimal saldo = iCuentaDao.getSaldoCuentaCliente(idCuenta);
+		
+		return saldo;
+	}
+	
 	@Override
 	public boolean modificarSaldo(int idCuenta, BigDecimal saldoNuevo) {
 		

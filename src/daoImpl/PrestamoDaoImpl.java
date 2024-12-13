@@ -93,6 +93,7 @@ public class PrestamoDaoImpl implements IPrestamoDao {
 		return totalPrestamos;
 		
 	}
+	
 	@Override
 	public int getTotalPrestamosCount(int idCliente) {
 		String query = "select count(*) from prestamos p\r\n" + 
@@ -364,5 +365,24 @@ public class PrestamoDaoImpl implements IPrestamoDao {
 	    
 	    return resultado;
 	}
+
+	@Override
+	public boolean pagarCuotasPrestamo(int idCuenta, String cuotasAPagar) {
+	    String query = "{CALL SP_PagarPlazos(?, ?)}"; 
+
+	    try (Connection conn = Conexion.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+	        ps.setString(1, cuotasAPagar);
+	        ps.setInt(2, idCuenta); 
+	        ResultSet rs = ps.executeQuery();
+
+	        if (rs.next()) {
+	            return true;
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return false;
+	}
+
 
 }

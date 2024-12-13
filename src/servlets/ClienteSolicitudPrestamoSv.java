@@ -29,10 +29,10 @@ import negocioImpl.TipoPrestamoNegocioImpl;
 @WebServlet("/ClienteSolicitudPrestamoSv")
 public class ClienteSolicitudPrestamoSv extends HttpServlet {
 	private static final long serialVersionUID = 1L;
-	ITipoPrestamoNegocio iTipoPrestamoNegocio = new TipoPrestamoNegocioImpl();
-	ICuentaNegocio iCuentaNegocio = new CuentaNegocioImpl();
-	IClienteNegocio iClienteNegocio = new ClienteNegocioImpl();
-	IPrestamoNegocio iPrestamoNegocio = new PrestamoNegocioImpl();
+	private ITipoPrestamoNegocio iTipoPrestamoNegocio = new TipoPrestamoNegocioImpl();
+	private ICuentaNegocio iCuentaNegocio = new CuentaNegocioImpl();
+	private IClienteNegocio iClienteNegocio = new ClienteNegocioImpl();
+	private IPrestamoNegocio iPrestamoNegocio = new PrestamoNegocioImpl();
 
 	public ClienteSolicitudPrestamoSv() {
 		super();
