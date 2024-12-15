@@ -10,7 +10,8 @@
 <title>Pago de cuotas</title>
 <style>
 .container {
-	max-width: 1300px;
+	margin-left: 30px;
+	max-width: 1350px;
 	margin: 0 auto;
 	padding: 15px;
 }
@@ -172,6 +173,24 @@
 	background-color: #3a7bd5;
 	transform: translateY(-2px);
 }
+
+
+.status {
+	padding: 4px 8px;
+	border-radius: 4px;
+	font-size: 14px;
+}
+
+.estado-finalizado {
+	background-color: #ffd700;
+}
+
+.estado-curso {
+	background-color: #28a745;
+	color: white;
+}
+
+
 </style>
 </head>
 <body>
@@ -185,7 +204,7 @@
 			if (totalPrestamos > 0) {
 		%>
 		<h4 class="card-title text-left" style="margin-bottom: 40px;">Mis
-			préstamos activos</h4>
+			préstamos</h4>
 		<table class="table table-striped table-hover">
 			<thead>
 				<tr>
@@ -195,8 +214,9 @@
 					<th>Importe a pagar</th>
 					<th>Cuotas totales</th>
 					<th>Cuotas abonadas</th>
-					<th>Fecha de alta</th>
+					<th>Fecha</th>
 					<th>Acción</th>
+					<th>Estado</th>
 				</tr>
 			</thead>
 			<tbody>
@@ -216,12 +236,39 @@
 					<td><%=prestamo.getCuotas()%></td>
 					<td><%=prestamo.getCuotasPagas()%></td>
 					<td><%=prestamo.getFecha()%></td>
+					<% 
+						if (prestamo.getEstado() == 1){ 
+					%>
 					<td>
 						<form action="ClientePagarCuotasSv" method="post">
 							<input type="hidden" name="idPrestamo" value="<%=prestamo.getIdPrestamo()%>"> 
 							<button type="submit" class="btn btn-outline-success">Pagar cuotas</button>
 						</form>
 					</td>
+					<%
+						} else {
+					%>
+						<td>-</td>
+					<%
+						}
+					%>
+					<%
+					    int estadoInt = prestamo.getEstado();
+					    String estado = "";
+					    String claseEstado = "";
+					
+					    if (estadoInt == 1) {
+					        estado = "En curso";
+					        claseEstado = "estado-curso";
+					    } else if (estadoInt == 3) {
+					        estado = "Finalizado";
+					        claseEstado = "estado-finalizado";
+					    } 
+					%>
+					<td>
+					    <span class="status <%=claseEstado%>"><%=estado%></span>
+					</td>
+					
 				</tr>
 				<%
 					}
@@ -298,7 +345,7 @@
 		%>
 		<div class="empty-state">
 			<div class="empty-state-icon">💸</div>
-			<h3>No tenés préstamos activos</h3>
+			<h3>No se encontraron registros de préstamos</h3>
 			<p>Parece que aún no has solicitado ningún préstamo. ¿Querés
 				solicitar uno?</p>
 			<a href="ClienteSolicitudPrestamoSv" class="btn-solicitar">Solicitar

@@ -37,8 +37,8 @@ public class PrestamoNegocioImpl implements IPrestamoNegocio{
 	}
 	
 	@Override
-	public int getTotalPrestamosActivosPorCliente(int idCliente) {
-		return iPrestamoDao.getTotalPrestamosActivosPorCliente(idCliente);
+	public int getTotalPrestamosPorCliente(int idCliente) {
+		return iPrestamoDao.getTotalPrestamosPorCliente(idCliente);
 	}
 	
 	@Override

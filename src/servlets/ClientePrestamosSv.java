@@ -40,7 +40,7 @@ public class ClientePrestamosSv extends HttpServlet {
 		
 		ArrayList<Prestamo> listaPrestamos = iPrestamoNegocio.getPrestamosPorCliente(idCliente, page, pageSize);
 		
-		int totalPrestamos = iPrestamoNegocio.getTotalPrestamosActivosPorCliente(idCliente);
+		int totalPrestamos = iPrestamoNegocio.getTotalPrestamosPorCliente(idCliente);
 		
 		int totalPaginas = (int) Math.ceil((double) totalPrestamos / pageSize);
 		

@@ -64,6 +64,24 @@ public class ClientePagarCuotasSv extends HttpServlet {
 	}
 
 	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
+		String action = request.getParameter("action");
+		
+		if ("pagar".equals(action)) {
+			int idCuenta = Integer.parseInt(request.getParameter("idCuenta"));
+			String[] selectedCuotas = request.getParameterValues("selectedCuotas");
+			String idsCuotas = String.join(",", selectedCuotas);
+			
+			BigDecimal saldoCliente = iCuentaNegocio.getSaldoCuentaCliente(idCuenta);
+			BigDecimal montoTotalCuotas = iCuotaNegocio.getMontoTotalCuotasAPagar(idsCuotas);
+			
+			if (saldoCliente.compareTo(montoTotalCuotas) < 0) {
+				request.setAttribute("saldoInsuficiente", true); 
+			} else {
+				iPrestamoNegocio.pagarCuotasPrestamo(idCuenta, idsCuotas);
+				request.setAttribute("pagoRealizado", true); 
+			}
+		}
+		
 		int idPrestamo = Integer.parseInt(request.getParameter("idPrestamo"));
 		request.getSession().setAttribute("idPrestamo", idPrestamo);
 		
@@ -88,23 +106,6 @@ public class ClientePagarCuotasSv extends HttpServlet {
         request.setAttribute("listaCuotas", listaCuotas);
         request.setAttribute("paginaActual", page);
         
-        String action = request.getParameter("action");
-        
-        if ("pagar".equals(action)) {
-    		int idCuenta = Integer.parseInt(request.getParameter("idCuenta"));
-    		String[] selectedCuotas = request.getParameterValues("selectedCuotas");
-    		String idsCuotas = String.join(",", selectedCuotas);
-    		
-    		BigDecimal saldoCliente = iCuentaNegocio.getSaldoCuentaCliente(idCuenta);
-    		BigDecimal montoTotalCuotas = iCuotaNegocio.getMontoTotalCuotasAPagar(idsCuotas);
-    		
-    		if (saldoCliente.compareTo(montoTotalCuotas) < 0) {
-    			request.setAttribute("saldoInsuficiente", true); 
-    		} else {
-    			iPrestamoNegocio.pagarCuotasPrestamo(idCuenta, idsCuotas);
-    			request.setAttribute("pagoRealizado", true); 
-    		}
-        }
         
 		RequestDispatcher dispatcher = request.getRequestDispatcher("/ClientePagarCuotas.jsp");
 	    dispatcher.forward(request, response);

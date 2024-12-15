@@ -16,6 +16,6 @@ public interface IPrestamoNegocio {
 	public boolean aprobarPrestamo(int idPrestamo);
 	public int getTotalPrestamosActivosCount();
 	public ArrayList<Prestamo> getPrestamosActivos(int page, int pageSize);
-	public int getTotalPrestamosActivosPorCliente(int idCliente);
+	public int getTotalPrestamosPorCliente(int idCliente);
 	public boolean pagarCuotasPrestamo(int idCuenta, String cuotasAPagar);
 }

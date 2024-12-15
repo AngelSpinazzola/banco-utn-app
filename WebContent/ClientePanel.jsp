@@ -3,7 +3,8 @@
 <%@ page import="entidad.Movimiento"%>
 <%@ page import="java.util.ArrayList"%>
 
-<%@ page language="java" contentType="text/html; charset=ISO-8859-1" pageEncoding="UTF-8"%>
+<%@ page language="java" contentType="text/html; charset=ISO-8859-1"
+	pageEncoding="UTF-8"%>
 <!DOCTYPE html>
 <html>
 <head>
@@ -101,7 +102,6 @@ body {
 .seccion-cartas {
 	margin-right: -15px;
 }
-
 
 .transactions-table .negative {
 	color: red;
@@ -236,185 +236,177 @@ body {
 	margin-top: 5px;
 	display: inline-block;
 	margin-right: 20px;
-	font-size: 1rem; 
-	margin-right: auto; 
+	font-size: 1rem;
+	margin-right: auto;
 }
 </style>
 </head>
 <body>
 
 	<%@ include file="../Componentes/Navbar.jsp"%>
-	<!-- Sección de cuentas -->
 	<form action="ClientePanelSv" method="post">
-		<div class="main-container">
+	<!-- Sección de cuentas -->
+	<div class="main-container">
+		<%
+			Cliente cliente = (Cliente) request.getAttribute("cliente");
+			ArrayList<Cuenta> cuentas = (ArrayList<Cuenta>) request.getAttribute("cuentas");
+			ArrayList<Movimiento> movimientos = (ArrayList<Movimiento>) request.getAttribute("movimientos");
+		%>
+		<h5>
+			Bienvenido/a
+			<%=cliente.getNombre() + " " + cliente.getApellido()%>
+		</h5>
+
+		<div class="container-cards mb-4">
 			<%
-				Cliente cliente = (Cliente) request.getAttribute("cliente");
-				ArrayList<Cuenta> cuentas = (ArrayList<Cuenta>) request.getAttribute("cuentas");
-				ArrayList<Movimiento> movimientos = (ArrayList<Movimiento>) request.getAttribute("movimientos");
+				if (cuentas != null && !cuentas.isEmpty()) {
+					for (Cuenta cuenta : cuentas) {
 			%>
-			<h5>
-				Bienvenido/a
-				<%=cliente.getNombre() + " " + cliente.getApellido()%>
-			</h5>
-
-			<div class="container-cards mb-4">
-				<%
-					if (cuentas != null && !cuentas.isEmpty()) {
-						for (Cuenta cuenta : cuentas) {
-				%>
-				<div class="card cuenta-card w-100">
-					<div
-						class="card-header <%=cuenta.getTipoCuenta().getTipo().equalsIgnoreCase("Caja de Ahorro") ? "text-primary"
+			<div class="card cuenta-card w-100">
+				<div
+					class="card-header <%=cuenta.getTipoCuenta().getTipo().equalsIgnoreCase("Caja de Ahorro") ? "text-primary"
 							: "text-success"%>">
-						<%=cuenta.getTipoCuenta().getTipo().equalsIgnoreCase("Caja de Ahorro") ? "Caja de Ahorro"
+					<%=cuenta.getTipoCuenta().getTipo().equalsIgnoreCase("Caja de Ahorro") ? "Caja de Ahorro"
 							: "Cuenta corriente"%>
-					</div>
-					<div class="card-body">
-						<p>
-							<strong>N° Cuenta:</strong>
-							<%=cuenta.getNumeroCuenta()%>
-						</p>
-						<p>
-							<strong>CBU:</strong>
-							<%=cuenta.getCbu()%>
-						</p>
-						<p>
-							<strong>Saldo:</strong> $<%=cuenta.getSaldo()%></p>
-					</div>
 				</div>
-				<%
-					}
-					} else {
-				%>
-				<p>No se encontraron cuentas para este cliente.</p>
-				<%
-					}
-				%>
+				<div class="card-body">
+					<p>
+						<strong>N° Cuenta:</strong>
+						<%=cuenta.getNumeroCuenta()%>
+					</p>
+					<p>
+						<strong>CBU:</strong>
+						<%=cuenta.getCbu()%>
+					</p>
+					<p>
+						<strong>Saldo:</strong> $<%=cuenta.getSaldo()%></p>
+				</div>
 			</div>
+			<%
+				}
+				} else {
+			%>
+			<p>No se encontraron cuentas para este cliente.</p>
+			<%
+				}
+			%>
+		</div>
 
-			<!-- Tabla de últimos movimientos -->
-			<div>
-				<h5>Resumen de movimientos</h5>
+		<!-- Tabla de últimos movimientos -->
+		<div>
+			<h5>Resumen de movimientos</h5>
 
-				<%
-					if (movimientos != null && !movimientos.isEmpty()) {
-				%>
-				<table class="table table-striped table-hover">
-					<thead>
-						<tr>
-							<th>ID Cuenta</th>
-							<th>Tipo de movimiento</th>
-							<th>Detalle</th>
-							<th>Monto</th>
-							<th>Fecha</th>
-						</tr>
-					</thead>
-					<tbody>
-						<%
-							for (Movimiento movimiento : movimientos) {
-						%>
-						<tr>
-							<td><%=movimiento.getIdCuentaReceptor()%></td>
-							<td><%=movimiento.getTipoMovimiento().getNombre()%></td>
-							<td><%=movimiento.getDetalle()%></td>
-							<td class="monto"><span class="signo-dolar">$</span><%= movimiento.getMonto() %></td>
-							<td><%=movimiento.getFecha()%></td>
-						</tr>
-						<%
-							}
-						%>
-					</tbody>
-				</table>
-
-				<!-- Paginación -->
-				<%
+			<%
+				if (movimientos != null && !movimientos.isEmpty()) {
+			%>
+			<table class="table table-striped table-hover">
+				<thead>
+					<tr>
+						<th>ID Cuenta</th>
+						<th>Tipo de movimiento</th>
+						<th>Detalle</th>
+						<th>Monto</th>
+						<th>Fecha</th>
+					</tr>
+				</thead>
+				<tbody>
+					<%
+						for (Movimiento movimiento : movimientos) {
+					%>
+					<tr>
+						<td><%=movimiento.getIdCuentaReceptor()%></td>
+						<td><%=movimiento.getTipoMovimiento().getNombre()%></td>
+						<td><%=movimiento.getDetalle()%></td>
+						<td class="monto"><span class="signo-dolar">$</span><%=movimiento.getMonto()%></td>
+						<td><%=movimiento.getFecha()%></td>
+					</tr>
+					<%
+						}
+					%>
+				</tbody>
+			</table>
+			<%
 					Integer totalMovimientos = (Integer) request.getAttribute("totalMovimientos");
-						Integer totalPaginas = (Integer) request.getAttribute("totalPaginas");
-						Integer paginaActual = (Integer) request.getAttribute("paginaActual");
-						if (totalMovimientos > 6) { 
-				%>
-				<nav aria-label="Paginación de movimientos">
-					<ul class="pagination justify-content-end">
-						<div class="pagination-info">
-							Mostrando página
-							<%=paginaActual%>
-							de
-							<%=totalPaginas%>
-						</div>
-						<!-- Botón Anterior -->
-						<li class="page-item <%=paginaActual == 1 ? "disabled" : ""%>">
-							<a class="page-link"
-							<%=paginaActual == 1 ? ""
-							: "href='ClientePanelSv?idCliente=" + cliente.getIdCliente() + "&page=" + (paginaActual - 1)
-									+ "&pageSize=6'"%>>
-								Anterior </a>
-						</li>
+					Integer totalPaginas = (Integer) request.getAttribute("totalPaginas");
+					Integer paginaActual = (Integer) request.getAttribute("paginaActual");
+					if (totalMovimientos > 6) {
+			%>
+			<nav aria-label="Paginación de préstamos" class="text-center"
+				style="margin-top: 50px;">
+				<ul class="pagination justify-content-center">
+					<div class="pagination-info">
+						Mostrando página
+						<%=paginaActual%>
+						de
+						<%=totalPaginas%>
+					</div>
+					<li class="page-item <%=paginaActual == 1 ? "disabled" : ""%>">
+						<a class="page-link"
+						<%=paginaActual == 1 ? ""
+							: "href='ClientePanelSv?page=" + (paginaActual - 1) + "&pageSize=5'"%>>
+							Anterior  </a>
+					</li>
 
-						<%
-						// Determina el rango de páginas a mostrar
+					<%
 						int startPage = Math.max(1, paginaActual - 1);
-						int endPage = Math.min(totalPaginas, startPage + 2);
+								int endPage = Math.min(totalPaginas, startPage + 2);
 
-						// Ajusta el rango para garantizar 3 botones
-						if (endPage - startPage < 2) {
-							startPage = Math.max(1, endPage - 2);
+								if (endPage - startPage < 2) {
+									startPage = Math.max(1, endPage - 2);
+								}
+
+								if (startPage > 1) {
+					%>
+					<li class="page-item"><a class="page-link"
+						href="ClientePanelSv?page=1&pageSize=5">1</a></li>
+					<li class="page-item disabled"><span class="page-link">...</span>
+					</li>
+					<%
 						}
 
-						if (startPage > 1) {
-						%>
-						<li class="page-item">
-							<a class="page-link" href="ClientePanelSv?idCliente=<%=cliente.getIdCliente()%>&page=1&pageSize=6">1</a>
-						</li>
-						<li class="page-item disabled"><span class="page-link">...</span></li>
-						<%
-							}
+								for (int i = startPage; i <= endPage; i++) {
+					%>
+					<li class="page-item <%=i == paginaActual ? "active" : ""%>">
+						<a class="page-link"
+						href="ClientePanelSv?page=<%=i%>&pageSize=5"> <%=i%>
+					</a>
+					</li>
+					<%
+						}
 
-						for (int i = startPage; i <= endPage; i++) {
-						%>
-						<li class="page-item <%=i == paginaActual ? "active" : ""%>">
-							<a class="page-link"
-							href="ClientePanelSv?idCliente=<%=cliente.getIdCliente()%>&page=<%=i%>&pageSize=6">
-								<%=i%>
-						</a>
-						</li>
-						<%
-							}
+								if (endPage < totalPaginas) {
+					%>
+					<li class="page-item disabled"><span class="page-link">...</span>
+					</li>
+					<li class="page-item"><a class="page-link"
+						href="ClientePanelSv?page=<%=totalPaginas%>&pageSize=5">
+							<%=totalPaginas%>
+					</a></li>
+					<%
+						}
+					%>
 
-						// Botón de última página si no está en el rango final
-						if (endPage < totalPaginas) {
-						%>
-						<li class="page-item disabled"><span class="page-link">...</span></li>
-						<li class="page-item"><a class="page-link"
-							href="ClientePanelSv?idCliente=<%=cliente.getIdCliente()%>&page=<%=totalPaginas%>&pageSize=6">
-								<%=totalPaginas%>
-						</a></li>
-						<%
-							}
-						%>
-
-						<!-- Botón Siguiente -->
-						<li
-							class="page-item <%=paginaActual == totalPaginas ? "disabled" : ""%>">
-							<a class="page-link"
-							<%=paginaActual == totalPaginas ? ""
-							: "href='ClientePanelSv?idCliente=" + cliente.getIdCliente() + "&page=" + (paginaActual + 1)
-									+ "&pageSize=6'"%>>
-								Siguiente </a>
-						</li>
-					</ul>
-				</nav>
-				<%
-					}
-				%>
-				<%
-					} else {
-				%>
-				<p>No se registraron movimientos para el cliente.</p>
-				<%
-					}
-				%>
-			</div>
+					<li
+						class="page-item <%=paginaActual == totalPaginas ? "disabled" : ""%>">
+						<a class="page-link"
+						<%=paginaActual == totalPaginas ? ""
+							: "href='ClientePanelSv?page=" + (paginaActual + 1) + "&pageSize=5'"%>>
+							Siguiente  </a>
+					</li>
+				</ul>
+			</nav>
+			<%
+				}
+			%>
+			<%
+				} else {
+			%>
+			<p class="text-center">No se registraron movimientos.</p>
+			<%
+				}
+			%>
 		</div>
+	</div>
 	</form>
 </body>
 </html>

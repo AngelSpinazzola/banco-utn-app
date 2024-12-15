@@ -100,7 +100,7 @@ CREATE TABLE PRESTAMOS (
     ImporteAPagar DECIMAL(10,2) NOT NULL,
     Cuotas INT NOT NULL,
     Fecha DATE NOT NULL,
-    Estado TINYINT NOT NULL DEFAULT 0, -- 0 pendiente, 1 aprobado, 2 rechazado
+    Estado TINYINT NOT NULL DEFAULT 0, -- 0 pendiente, 1 aprobado, 2 rechazado - 3 finalizado
 	CONSTRAINT fk_PrestamoId FOREIGN KEY (IDTipoPrestamo) REFERENCES TIPO_PRESTAMOS(IDTipoPrestamo),
     CONSTRAINT fk_CuentaId FOREIGN KEY (IDCuenta) REFERENCES CUENTAS(IDCuenta),
     CONSTRAINT chk_Monto CHECK (MontoPedido REGEXP '^[0-9]+(\\.[0-9]{1,2})?$'),
@@ -651,13 +651,25 @@ CREATE PROCEDURE SP_CrearCuenta(
     IN p_IDTipoCuenta INT
 )
 BEGIN
+    -- Declarar la variable al inicio
+    DECLARE p_IDCuenta INT;
+
+    -- Insertar la nueva cuenta
     INSERT INTO Cuentas (IDCliente, FechaCreacion, NumeroCuenta, CBU, Saldo, IDTipoCuenta)
-    VALUES (p_IDCliente, CURDATE(), NULL, NULL, 10000, p_IDTipoCuenta);  
+    VALUES (p_IDCliente, CURDATE(), NULL, NULL, 10000, p_IDTipoCuenta);
+
+    -- Obtener el ID de la cuenta recién creada
+    SET p_IDCuenta = LAST_INSERT_ID();
+
+    -- Insertar el movimiento correspondiente
+    INSERT INTO Movimientos (Fecha, DetalleDestino, Importe, IDCuentaReceptor, IDTipoMovimiento)
+    VALUES (CURDATE(), 'Cuenta creada', 10000, p_IDCuenta, 1);
 END$$
 
 DELIMITER ;
 
---Procedure para pagar cuotas de préstamo
+
+-- Procedure para pagar cuotas de préstamo
 DELIMITER //
 
 CREATE PROCEDURE SP_PagarPlazos(
@@ -667,6 +679,8 @@ CREATE PROCEDURE SP_PagarPlazos(
 BEGIN
     DECLARE v_TotalAPagar DECIMAL(10,2);
     DECLARE v_SaldoCuenta DECIMAL(10,2);
+    DECLARE v_IDPrestamo INT;
+    DECLARE v_CuotasPendientes INT;
     
     SET SQL_SAFE_UPDATES = 0;
 
@@ -677,6 +691,11 @@ BEGIN
     SELECT Saldo INTO v_SaldoCuenta
     FROM CUENTAS
     WHERE IDCuenta = p_IDCuenta;
+    
+    SELECT IDPrestamo INTO v_IDPrestamo
+    FROM PLAZOS
+    WHERE FIND_IN_SET(IDPlazo, p_IDPlazos) > 0
+    LIMIT 1;
     
     IF v_SaldoCuenta >= v_TotalAPagar THEN
         -- Iniciar una transacción
@@ -707,6 +726,20 @@ BEGIN
             p_IDCuenta,
             (SELECT IDTipoMovimiento FROM TIPO_MOVIMIENTOS WHERE Nombre = 'Pago de préstamo')
         );
+        
+         -- Verifica si quedan cuotas pendientes
+        SELECT COUNT(*) INTO v_CuotasPendientes
+        FROM PLAZOS
+        WHERE IDPrestamo = v_IDPrestamo AND Estado = 0;
+        
+        -- Si no hay cuotas pendientes, cambia el estado del préstamo a finalizado
+        IF v_CuotasPendientes = 0 THEN
+            UPDATE PRESTAMOS
+            SET 
+                Estado = 3,
+                Fecha = CURRENT_DATE
+            WHERE IDPrestamo = v_IDPrestamo;
+        END IF;
         
         COMMIT;
         

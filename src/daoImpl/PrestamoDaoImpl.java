@@ -35,7 +35,7 @@ public class PrestamoDaoImpl implements IPrestamoDao {
 	            "INNER JOIN cuentas cu ON cu.IDCuenta = p.IDCuenta\r\n" + 
 	            "INNER JOIN clientes c ON c.IDCliente = cu.IDCliente\r\n" + 
 	            "INNER JOIN tipo_prestamos tp ON tp.IDTipoPrestamo = p.IDTipoPrestamo\r\n" + 
-	            "WHERE cu.IDCliente = ? AND p.Estado = 1\r\n" + 
+	            "WHERE cu.IDCliente = ? and p.Estado in (1,3)\r\n" + 
 	            "LIMIT ? OFFSET ?\r\n";
 
 	    try (Connection conn = Conexion.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
@@ -71,8 +71,8 @@ public class PrestamoDaoImpl implements IPrestamoDao {
 	}
 	
 	@Override
-	public int getTotalPrestamosActivosPorCliente(int idCliente) {
-		String query = "select count(*) from prestamos p inner join cuentas cu on cu.IDCuenta = p.IDCuenta inner join clientes c on c.IDCliente = cu.IDCliente where c.IDCliente = ? and p.Estado = 1";
+	public int getTotalPrestamosPorCliente(int idCliente) {
+		String query = "select count(*) from prestamos p inner join cuentas cu on cu.IDCuenta = p.IDCuenta inner join clientes c on c.IDCliente = cu.IDCliente where c.IDCliente = ? and p.Estado in (1,3)";
 		
 		int totalPrestamos = 0;
 
