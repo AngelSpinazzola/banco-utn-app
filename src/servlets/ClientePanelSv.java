@@ -47,7 +47,6 @@ public class ClientePanelSv extends HttpServlet {
         int totalMovimientos = iMovimientoNegocio.getTotalMovimientos(cliente.getIdCliente());
         int totalPaginas = (int) Math.ceil((double) totalMovimientos / pageSize);
        
-        System.out.println("total movimientos en do get: " + totalMovimientos);
 		request.setAttribute("cliente", cliente);
 		request.setAttribute("cuentas", cuentas);
 		request.setAttribute("movimientos", movimientos);

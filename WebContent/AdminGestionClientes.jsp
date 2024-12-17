@@ -180,7 +180,7 @@
 	<div class="container">
 		<h3 class="titulo">Gestión de clientes</h3>
 		<div class="btn-nuevo-cliente-container">
-			<a href="CargarDesplegablesSv?action=agregarCliente">
+			<a href="AltaClienteSv">
 				<button class="btn-general btn-nuevo-cliente" style="margin-buttom: 10px !important;">Nuevo Cliente</button>
 			</a>
 		</div>

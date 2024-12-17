@@ -14,4 +14,8 @@ public interface IClienteNegocio {
 	public Cliente getDetalleCliente(int idCliente);
 	public void verificarCliente(Cliente cliente) throws ClienteNegocioException;
 	public Cliente getClientePorIdUsuario(int idUsuario);
+	public boolean existeDni(String dni);
+	public boolean existeCuil(String cuil);
+	public boolean existeUsuario(String user, String pass);
+	public boolean existeEmail(String email);
 }

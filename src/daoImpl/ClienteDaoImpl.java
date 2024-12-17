@@ -285,7 +285,91 @@ public class ClienteDaoImpl implements IClienteDao {
 		return cliente;
 	}
 	
+	@Override
+	public boolean existeDni(String dni) {
+	    String query = "SELECT EXISTS(SELECT 1 FROM clientes WHERE dni = ?)";
+	    boolean existe = false;
+
+	    try (Connection conexion = Conexion.getConnection();
+	        PreparedStatement statement = conexion.prepareStatement(query)) {
+	         
+	        statement.setString(1, dni);
+	        ResultSet resultSet = statement.executeQuery();
+	        
+	        if (resultSet.next()) {
+	            existe = resultSet.getBoolean(1);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return existe;
+	}
+
+	@Override
+	public boolean existeCuil(String cuil) {
+		String query = "select exists(select 1 from clientes where cuil = ?)";
+	    boolean existe = false;
+
+	    try (Connection conexion = Conexion.getConnection();
+	         PreparedStatement statement = conexion.prepareStatement(query)) {
+	         
+	        statement.setString(1, cuil);
+	        ResultSet resultSet = statement.executeQuery();
+	        
+	        if (resultSet.next()) {
+	            existe = resultSet.getBoolean(1);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return existe;
+	}
 	
+	@Override
+	public boolean existeUsuario(String user, String pass) {
+	    String queryUser = "SELECT contrasenia FROM usuarios WHERE Usuario = ?";
+	    boolean existeCombo = false;
+	    
+	    try (Connection conexion = Conexion.getConnection();
+	         PreparedStatement statement = conexion.prepareStatement(queryUser)) {
+	         
+	        statement.setString(1, user);
+	        ResultSet resultSet = statement.executeQuery();
+	        
+	        if (resultSet.next()) {
+	            String passwordBD = resultSet.getString("contrasenia");
+	            if (passwordBD.equals(pass)) {
+	                existeCombo = true;
+	            }
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return existeCombo;
+	}
 	
+	@Override
+	public boolean existeEmail(String email) {
+		String query = "select exists(select 1 from clientes where email = ?)";
+		boolean existeEmail = false;
+		
+		try (Connection conexion = Conexion.getConnection();
+			PreparedStatement statement = conexion.prepareStatement(query)) {
+	         
+	        statement.setString(1, email);
+	        ResultSet resultSet = statement.executeQuery();
+	        
+	        if (resultSet.next()) {
+	            existeEmail = resultSet.getBoolean(1);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+		    
+	    return existeEmail;
+	}
 
 }

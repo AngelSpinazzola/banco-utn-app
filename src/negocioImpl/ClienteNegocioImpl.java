@@ -163,11 +163,43 @@ public class ClienteNegocioImpl implements IClienteNegocio {
 			boolean resultado = iClienteDao.editarCliente(cliente);
 			return resultado;
 		} catch (ClienteNegocioException e) {
-			System.out.println("Error al verificar el cliente: " + e.getMessage());
 			throw new ClienteNegocioException(e.getMessage());
 			
 		}
 
 	}
+	
+	@Override
+	public boolean existeDni(String dni) {
+		boolean existe = iClienteDao.existeDni(dni);
+		
+		return existe;
+	}
+	
+	@Override
+	public boolean existeCuil(String cuil) {
+		boolean existe = iClienteDao.existeCuil(cuil);
+		
+		return existe;
+	}
+	
+	@Override
+	public boolean existeUsuario(String user, String pass) {
+		boolean existe = iClienteDao.existeUsuario(user, pass);
+		
+		return existe;
+	}
+	
+	@Override
+	public boolean existeEmail(String email) {
+		boolean existe = iClienteDao.existeEmail(email);
+		
+		return existe;
+	}
 
 }
+
+
+
+
+

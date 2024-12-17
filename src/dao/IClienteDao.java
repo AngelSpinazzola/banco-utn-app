@@ -12,4 +12,8 @@ public interface IClienteDao {
 	public int calcularTotalPaginas(int pageSize);
 	public Cliente getDetalleCliente(int idCliente);
 	public Cliente getClientePorIdUsuario(int idUsuario);
+	public boolean existeDni(String dni);
+	public boolean existeCuil(String cuil);
+	public boolean existeUsuario(String user, String pass);
+	public boolean existeEmail(String email);
 }
