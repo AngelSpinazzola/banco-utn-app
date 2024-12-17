@@ -40,7 +40,7 @@ public class ClientePanelSv extends HttpServlet {
         String pageSizeParam = request.getParameter("pageSize");
         
         int page = (pageParam != null && !pageParam.isEmpty()) ? Integer.parseInt(pageParam) : 1;
-        int pageSize = (pageSizeParam != null && !pageSizeParam.isEmpty()) ? Integer.parseInt(pageSizeParam) : 6;
+        int pageSize = (pageSizeParam != null && !pageSizeParam.isEmpty()) ? Integer.parseInt(pageSizeParam) : 5;
         
         ArrayList<Movimiento> movimientos = iMovimientoNegocio.getMovimientosPorCliente(cliente.getIdCliente(), page, pageSize);
 		

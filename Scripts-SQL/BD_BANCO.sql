@@ -916,23 +916,6 @@ VALUES
 (8, 19000, 2, 1),
 (10, 15000, 2, 1);
 
--- Inserts para movimientos
-INSERT INTO MOVIMIENTOS(Fecha, DetalleOrigen, DetalleDestino, Importe, IDCuentaEmisor, IDCuentaReceptor, IDTipoMovimiento)
-VALUES
-('2024-04-15', 'Transferencia a Diego Vega','Transferencia recibida de Natalia Ortiz', 2700, 5, 2, 4);
-/*
-('2024-04-10', null, 'Ajuste administrativo', 3000, null, 6, 5)
-
-('2024-04-20', '','Transferencia recibida de Andrés García', 15000, 13, 5, 4),
-('2024-04-25', '','Transferencia recibida de Pedro Alfonso', 6000, 12, 5, 4),
-('2024-05-05', '','Transferencia recibida de Armando Hernandéz', 4000, 11, 5, 4),
-('2024-05-10', '','Transferencia recibida de Jose Perez', 25000, 11, 5, 4),
-('2024-05-15', '','Transferencia recibida de Diego Gonzales', 4000, 11, 5, 4),
-('2024-05-20', '','Transferencia recibida de Jose Gonzales', 25000, 11, 5, 4),
-('2024-05-25', '','Transferencia recibida de Mario Hernandéz', 4000, 11, 5, 4),
-('2024-06-05', '','Transferencia recibida de Jorge Perez', 25000, 11, 5, 4);
-*/
-
 -- Inserts para los tipo de préstamos 
 INSERT INTO TIPO_PRESTAMOS (Tipo, TNA) 
 VALUES 
@@ -969,3 +952,22 @@ VALUES
 (3, 2, 45000.00, 56250.00, 24, '2022-02-14'),   
 (2, 2, 30000.00, 58000.00, 18, '2022-03-15'); 
 
+
+-- Inserts para movimientos
+INSERT INTO MOVIMIENTOS(Fecha, DetalleOrigen, DetalleDestino, Importe, IDCuentaEmisor, IDCuentaReceptor, IDTipoMovimiento)
+VALUES
+('2024-04-15', 'Transferencia a Diego Vega','Transferencia recibida de Natalia Ortiz', 2700, 5, 3, 4),
+('2024-08-15', 'Transferencia a Diego Vega','Transferencia recibida de Natalia Ortiz', 3300, 5, 3, 4),
+('2024-09-20', 'Transferencia a Natalia Ortiz', 'Transferencia recibida de Diego Vega', 3000, 3, 5, 4),
+('2024-10-20', 'Transferencia a Fernando Luna', 'Transferencia recibida de Diego Vega', 3000, 3, 9, 4),
+('2023-03-20', 'Transferencia a Fernando Luna', 'Transferencia recibida de Diego Vega', 3000, 3, 9, 4),
+('2024-02-12', 'Transferencia a Valeria Mendoza', 'Transferencia recibida de Fernando Luna', 12630, 9, 11, 4),
+('2024-02-14', 'Transferencia a Valeria Mendoza', 'Transferencia recibida de Fernando Luna', 6500, 9, 11, 4),
+('2023-03-20', 'Transferencia a Natalia Ortiz', 'Transferencia recibida de Diego Vega', 3000, 3, 5, 4),
+('2023-04-10', 'Transferencia a Fernando Luna', 'Transferencia recibida de Diego Vega', 5000, 4, 9, 4),
+('2023-06-12', 'Transferencia a Valeria Mendoza', 'Transferencia recibida de Fernando Luna', 6500, 9, 11, 4),
+('2023-06-20', 'Transferencia a Federico Domínguez', 'Transferencia recibida de Valeria Mendoza', 12500, 11, 14, 4),
+('2023-08-20', 'Transferencia a Federico Domínguez', 'Transferencia recibida de Valeria Mendoza', 5670, 11, 14, 4);
+CALL SP_AprobarPrestamo (3);
+CALL SP_AprobarPrestamo(5);
+CALL SP_AprobarPrestamo(8);

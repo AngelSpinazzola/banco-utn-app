@@ -329,7 +329,7 @@ body {
 					Integer totalMovimientos = (Integer) request.getAttribute("totalMovimientos");
 					Integer totalPaginas = (Integer) request.getAttribute("totalPaginas");
 					Integer paginaActual = (Integer) request.getAttribute("paginaActual");
-					if (totalMovimientos > 6) {
+					if (totalMovimientos > 5) {
 			%>
 			<nav aria-label="Paginación de préstamos" class="text-center"
 				style="margin-top: 50px;">

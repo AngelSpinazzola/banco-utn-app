@@ -44,84 +44,77 @@ public class MovimientoDaoImpl implements IMovimientoDao {
 	
 	@Override
 	public ArrayList<Movimiento> getMovimientosPorCliente(int idCliente, int page, int pageSize){
-		ArrayList<Movimiento> movimientos = new ArrayList<>();
+	    ArrayList<Movimiento> movimientos = new ArrayList<>();
+	    int offset = (page - 1) * pageSize;
+	    
+	    String query = "SELECT \r\n" + 
+	            "    m.IDMovimiento AS idMovimiento,\r\n" + 
+	            "    CASE \r\n" + 
+	            "        WHEN m.IDCuentaEmisor IN (SELECT IDCuenta FROM cuentas WHERE IDCliente = ?) THEN m.IDCuentaEmisor\r\n" + 
+	            "        ELSE m.IDCuentaReceptor\r\n" + 
+	            "    END AS idCuentaReceptor,\r\n" + 
+	            "    m.Fecha AS fecha,\r\n" + 
+	            "    m.Importe AS importe,\r\n" + 
+	            "    CASE \r\n" + 
+	            "        WHEN m.IDTipoMovimiento = 2 AND tp.Tipo IS NOT NULL THEN CONCAT('Préstamo ', tp.Tipo)\r\n" + 
+	            "        WHEN m.IDTipoMovimiento = 2 THEN 'Préstamo'\r\n" + 
+	            "        WHEN EXISTS (\r\n" + 
+	            "            SELECT 1 FROM cuentas ce \r\n" + 
+	            "            JOIN cuentas cr ON cr.IDCliente = ce.IDCliente \r\n" + 
+	            "            WHERE ce.IDCuenta = m.IDCuentaEmisor \r\n" + 
+	            "              AND cr.IDCuenta = m.IDCuentaReceptor\r\n" + 
+	            "              AND ce.IDCliente = ?\r\n" + 
+	            "        ) THEN 'Traspaso de dinero entre cuentas'\r\n" + 
+	            "        WHEN m.IDCuentaEmisor IN (SELECT IDCuenta FROM cuentas WHERE IDCliente = ?) THEN m.DetalleOrigen\r\n" + 
+	            "        ELSE m.DetalleDestino\r\n" + 
+	            "    END AS detalle,\r\n" + 
+	            "    tm.IDTipoMovimiento AS idTipo,\r\n" + 
+	            "    tm.Nombre AS nombreTipo,\r\n" + 
+	            "    cu.IDCliente AS clienteId\r\n" + 
+	            "FROM movimientos m\r\n" + 
+	            "INNER JOIN tipo_movimientos tm ON tm.IDTipoMovimiento = m.IDTipoMovimiento\r\n" + 
+	            "LEFT JOIN prestamos p ON p.IDCuenta = m.IDCuentaReceptor AND p.Estado = 1\r\n" + 
+	            "LEFT JOIN tipo_prestamos tp ON tp.IDTipoPrestamo = p.IDTipoPrestamo\r\n" + 
+	            "INNER JOIN cuentas cu ON cu.IDCuenta IN (m.IDCuentaEmisor, m.IDCuentaReceptor)\r\n" + 
+	            "WHERE cu.IDCliente = ?\r\n" + 
+	            "GROUP BY m.IDMovimiento\r\n" + 
+	            "ORDER BY m.Fecha DESC\r\n" + 
+	            "LIMIT ? OFFSET ?";
 
-		int offset = (page - 1) * pageSize;
-		
-		String query = "SELECT \r\n" + 
-				"    cu.NumeroCuenta AS numeroCuenta,\r\n" + 
-				"    m.IDMovimiento AS idMovimiento,\r\n" + 
-				"    CASE \r\n" + 
-				"        WHEN m.IDTipoMovimiento = 2 THEN m.DetalleDestino\r\n" + 
-				"        WHEN m.IDTipoMovimiento = 3 THEN tm.Nombre  -- Nueva condición para pago de préstamo\r\n" + 
-				"        ELSE \r\n" + 
-				"            CASE \r\n" + 
-				"                WHEN m.IDCuentaEmisor = cu.IDCuenta \r\n" + 
-				"                     AND cu.IDCliente = (SELECT IDCliente \r\n" + 
-				"                                         FROM Cuentas \r\n" + 
-				"                                         WHERE IDCuenta = m.IDCuentaReceptor) \r\n" + 
-				"                THEN 'Traspaso de dinero entre cuentas'\r\n" + 
-				"                ELSE \r\n" + 
-				"                    CASE \r\n" + 
-				"                        WHEN m.IDCuentaEmisor = cu.IDCuenta THEN m.DetalleOrigen\r\n" + 
-				"                        ELSE m.DetalleDestino\r\n" + 
-				"                    END\r\n" + 
-				"            END\r\n" + 
-				"    END AS detalle,\r\n" + 
-				"    m.Fecha AS fecha,\r\n" + 
-				"    m.Importe AS importe,\r\n" + 
-				"    CASE \r\n" + 
-				"        WHEN m.IDTipoMovimiento = 3 THEN m.IDCuentaEmisor  -- Modificación para mostrar IDCuentaEmisor en pago de préstamo\r\n" + 
-				"        ELSE m.IDCuentaReceptor \r\n" + 
-				"    END AS idCuentaReceptor,\r\n" + 
-				"    tm.IDTipoMovimiento AS idTipo,\r\n" + 
-				"    tm.Nombre AS nombreTipo\r\n" + 
-				"FROM movimientos m\r\n" + 
-				"INNER JOIN tipo_movimientos tm \r\n" + 
-				"    ON tm.IDTipoMovimiento = m.IDTipoMovimiento\r\n" + 
-				"INNER JOIN cuentas cu \r\n" + 
-				"    ON cu.IDCuenta IN (m.IDCuentaEmisor, m.IDCuentaReceptor)\r\n" + 
-				"LEFT JOIN prestamos p \r\n" + 
-				"    ON p.IDCuenta = cu.IDCuenta \r\n" + 
-				"   AND m.IDTipoMovimiento = 2\r\n" + 
-				"WHERE cu.IDCliente = ?\r\n" + 
-				"GROUP BY m.IDMovimiento\r\n" + 
-				"ORDER BY m.Fecha DESC\r\n" + 
-				"LIMIT ? OFFSET ?;";
-
-		try (Connection conn = Conexion.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
-	        ps.setInt(1, idCliente);          
-	        ps.setInt(2, pageSize);          
-	        ps.setInt(3, offset);             
-
+	    try (Connection conn = Conexion.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
+	        ps.setInt(1, idCliente);  
+	        ps.setInt(2, idCliente);  
+	        ps.setInt(3, idCliente);  
+	        ps.setInt(4, idCliente);  
+	        ps.setInt(5, pageSize);   
+	        ps.setInt(6, offset);           
 	        ResultSet rs = ps.executeQuery();
-
 	        while (rs.next()) {
-				Movimiento movimiento = new Movimiento();
-				TipoMovimiento tipoMovimiento = new TipoMovimiento();
-				
-				tipoMovimiento.setId(rs.getInt("idTipo"));
-				tipoMovimiento.setNombre(rs.getString("nombreTipo"));
-				movimiento.setId(rs.getInt("idMovimiento"));
-				movimiento.setDetalle(rs.getString("detalle"));
-				movimiento.setFecha(rs.getDate("fecha"));
-				movimiento.setMonto(rs.getBigDecimal("importe"));
-				movimiento.setIdCuentaReceptor(rs.getInt("idCuentaReceptor"));
-				movimiento.setTipoMovimiento(tipoMovimiento);
-
-				movimientos.add(movimiento);
-			}
-		} catch (Exception e) {
-			e.printStackTrace();
-		}
-		return movimientos;
+	            Movimiento movimiento = new Movimiento();
+	            TipoMovimiento tipoMovimiento = new TipoMovimiento();
+	            
+	            tipoMovimiento.setId(rs.getInt("idTipo"));
+	            tipoMovimiento.setNombre(rs.getString("nombreTipo"));
+	            movimiento.setId(rs.getInt("idMovimiento"));
+	            movimiento.setDetalle(rs.getString("detalle"));
+	            movimiento.setFecha(rs.getDate("fecha"));
+	            movimiento.setMonto(rs.getBigDecimal("importe"));
+	            movimiento.setIdCuentaReceptor(rs.getInt("idCuentaReceptor"));
+	            movimiento.setTipoMovimiento(tipoMovimiento);
+	            movimientos.add(movimiento);
+	        }
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return movimientos;
 	}
 	
 	@Override
 	public int getTotalMovimientosPorCliente(int idCliente) {
-	    String query = "SELECT COUNT(*) FROM movimientos m " +
-	                   "INNER JOIN cuentas cu ON cu.IDCuenta = m.IDCuentaReceptor " +
-	                   "WHERE cu.IDCliente = ?";
+	    String query = "SELECT COUNT(*) AS TotalMovimientos\r\n" + 
+	    		"FROM MOVIMIENTOS M\r\n" + 
+	    		"INNER JOIN CUENTAS C ON M.IDCuentaEmisor = C.IDCuenta OR M.IDCuentaReceptor = C.IDCuenta\r\n" + 
+	    		"WHERE C.IDCliente = ?;";
 
 	    int totalMovimientos = 0;
 
@@ -138,7 +131,6 @@ public class MovimientoDaoImpl implements IMovimientoDao {
 	    } catch (Exception e) {
 	        e.printStackTrace();
 	    }
-
 	    return totalMovimientos;
 	}
 
