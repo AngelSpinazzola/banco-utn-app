@@ -12,7 +12,6 @@ public interface IClienteNegocio {
 	public int getTotalClientesCount();
 	public int calcularTotalPaginas(int pageSize);
 	public Cliente getDetalleCliente(int idCliente);
-	public void verificarCliente(Cliente cliente) throws ClienteNegocioException;
 	public Cliente getClientePorIdUsuario(int idUsuario);
 	public boolean existeDni(String dni);
 	public boolean existeCuil(String cuil);

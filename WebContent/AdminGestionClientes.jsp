@@ -218,15 +218,10 @@
 									<i class="fas fa-ellipsis-v"></i>
 								</button>
 								<div class="action-dropdown">
-									<a
-										href="DetalleClienteSv?idCliente=<%=cliente.getIdCliente()%>">Ver
-										Cliente</a> <a
-										href="EditarClienteSv?idCliente=<%=cliente.getIdCliente()%>">Editar
-										Cliente</a> <a
-										href="AdminCuentasClienteSv?idCliente=<%=cliente.getIdCliente()%>">Gestionar
-										Cuentas</a> <a
-										href="BajaClienteSv?idCliente=<%=cliente.getIdCliente()%>">Eliminar
-										cliente</a>
+									<a href="DetalleClienteSv?idCliente=<%=cliente.getIdCliente()%>">Ver Cliente</a> 
+									<a href="EditarClienteSv?idCliente=<%=cliente.getIdCliente()%>">Editar Cliente</a> 
+									<a href="AdminCuentasClienteSv?idCliente=<%=cliente.getIdCliente()%>">Gestionar Cuentas</a> 
+									<a href="BajaClienteSv?idCliente=<%=cliente.getIdCliente()%>">Eliminar Cliente</a>
 								</div>
 							</div>
 						</td>

@@ -155,21 +155,25 @@ body {
 			        <!-- Nombre -->
 			        <div class="col-md-6">
 			            <label for="nombre" class="form-label">Nombre</label>
-			            <input type="text" id="nombre" name="nombre" class="form-control"
-			                placeholder="Ingrese el nombre" required pattern="^[a-zA-ZÀ-ÿ\s]+$"
-			                value="<%= formData != null ? formData.get("nombre") : "" %>"
-			                title="El nombre solo debe contener letras." maxlength="49"
-			                oninput="validarLongitud(this, 49)">
+			            <input type="text" id="nombre" name="nombre" 
+			            class="form-control"
+		                placeholder="Ingrese el nombre" 
+		                required pattern="^[a-zA-ZÀ-ÿ]+(?: [a-zA-ZÀ-ÿ]+)*$"
+		                value="<%= formData != null ? formData.get("nombre") : "" %>"
+		                title="El nombre solo debe contener letras." maxlength="49"
+		                oninput="validarLongitud(this, 49)">
 			        </div>
 			
 			        <!-- Apellido -->
 			        <div class="col-md-6">
 			            <label for="apellido" class="form-label">Apellido</label>
-			            <input type="text" id="apellido" name="apellido" class="form-control"
-			                placeholder="Ingrese el apellido" required pattern="^[a-zA-ZÀ-ÿ\s]+$"
-			                value="<%= formData != null ? formData.get("apellido") : "" %>"
-			                title="El apellido solo debe contener letras." maxlength="49"
-			                oninput="validarLongitud(this, 49)">
+			            <input type="text" id="apellido" name="apellido" 
+			            class="form-control"
+		                placeholder="Ingrese el apellido" 
+		                required pattern="^[a-zA-ZÀ-ÿ]+(?: [a-zA-ZÀ-ÿ]+)*$"
+		                value="<%= formData != null ? formData.get("apellido") : "" %>"
+		                title="El apellido solo debe contener letras." maxlength="49"
+		                oninput="validarLongitud(this, 49)">
 			        </div>
 			
 			        <!-- DNI -->
@@ -203,20 +207,36 @@ body {
 			        <div class="col-md-6">
 			            <label for="nombreUsuario" class="form-label">Nombre de usuario</label>
 			            <input type="text" id="nombreUsuario" name="nombreUsuario"
-			                class="form-control" required placeholder="Nombre de usuario"
-			                maxlength="24" value="<%= formData != null ? formData.get("nombreUsuario") : "" %>">
+		                class="form-control" 
+		                required 
+		                placeholder="Nombre de usuario"
+		                maxlength="24"
+		                pattern="^[a-zA-Z0-9]+$"
+    					title="El nombre de usuario solo puede contener letras y números, sin espacios." 
+		                value="<%= formData != null ? formData.get("nombreUsuario") : "" %>">
 			        </div>
 			
 			        <!-- Contraseña -->
 			        <div class="col-md-6">
 			            <label for="password" class="form-label">Contraseña</label>
-			            <input type="password" id="password" name="password" class="form-control" required placeholder="Contraseña" maxlength="24">
+			            <input type="password" id="password" name="password" 
+			            class="form-control" 
+			            required 
+			            placeholder="Contraseña" 
+			            pattern="^\S+$" 
+        				title="La contraseña no debe contener espacios."
+			            maxlength="24">
 			        </div>
 			
 			        <!-- Confirmar contraseña -->
 			        <div class="col-md-6">
 			            <label for="confirmPassword" class="form-label">Confirmar contraseña</label>
-			            <input type="password" id="confirmPassword" name="confirmPassword" class="form-control" required placeholder="Confirmar contraseña" 
+			            <input type="password" id="confirmPassword" name="confirmPassword" 
+			            class="form-control" 
+			            required 
+			            placeholder="Confirmar contraseña" 
+			            pattern="^\S+$" 
+       					title="La contraseña no debe contener espacios."
 			            maxlength="24">
 			            <div id="passwordError" class="text-danger mt-1" style="display: none;">
 			                Las contraseñas no coinciden.
@@ -230,15 +250,15 @@ body {
 			                <option value="">Seleccione el sexo</option>
 			                <option value="Masculino" <%= formData != null && "Masculino".equals(formData.get("sexo")) ? "selected" : "" %>>Masculino</option>
 			                <option value="Femenino" <%= formData != null && "Femenino".equals(formData.get("sexo")) ? "selected" : "" %>>Femenino</option>
-			                <option value="No definido" <%= formData != null && "No definido".equals(formData.get("sexo")) ? "selected" : "" %>>Otro</option>
+			                <option value="Otro" <%= formData != null && "No definido".equals(formData.get("sexo")) ? "selected" : "" %>>Otro</option>
 			            </select>
 			        </div>
 			
 			        <!-- Teléfono -->
 			        <div class="col-md-6">
 			            <label for="telefono" class="form-label">Teléfono</label>
-			            <input type="text" id="telefono" name="telefono" class="form-control" placeholder="Ingrese el teléfono del cliente"
-			            required pattern="^[+]?[\d ]+$" title="El telefono solo debe contener numeros, espacios y el signo '+'." maxlength="29" 
+			            <input type="text" id="telefono" name="telefono" class="form-control" placeholder="Ingrese el teléfono"
+			            required pattern="^\+?\d+(\s\d+)*$" title="El telefono solo debe contener numeros, espacios y el signo '+'." maxlength="29" 
 			            value="<%= formData != null ? formData.get("telefono") : "" %>">
 			        </div>
 			
@@ -327,10 +347,13 @@ body {
 			        <!-- Calle -->
 			        <div class="col-md-4 address-col">
 			            <label for="calle" class="form-label">Calle</label>
-			            <input type="text" id="calle" name="calle" class="form-control"
-			                required placeholder="Calle" pattern="^[a-zA-Z\s]+$"
-			                value="<%= formData != null ? formData.get("calle") : "" %>"
-			                title="La calle solo debe contener letras." maxlength="29">
+			            <input type="text" id="calle" name="calle" 
+			            class="form-control"
+			            required placeholder="Calle" 
+			            pattern="^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$" 
+			            value="<%= formData != null ? formData.get("calle") : "" %>"
+			            title="La calle solo debe contener letras." 
+			            maxlength="29">
 			        </div>
 			
 			        <!-- Número -->
@@ -339,7 +362,7 @@ body {
 			            <input type="text" id="numero" name="numero" class="form-control"
 			                required placeholder="Número" pattern="^\d+$"
 			                value="<%= formData != null ? formData.get("numero") : "" %>"
-			                title="El número solo debe contener números." maxlength="29">
+			                title="La altura solo debe contener números." maxlength="29">
 			        </div>
 			    </div>
 			</form>

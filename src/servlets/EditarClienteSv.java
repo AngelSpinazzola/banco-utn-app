@@ -107,6 +107,18 @@ public class EditarClienteSv extends HttpServlet {
                 response.sendRedirect("ListarClientesSv");
             }
         } catch (ClienteNegocioException e) {
+        	Cliente _cliente = iClienteNegocio.getDetalleCliente(idCliente);
+            ArrayList<Nacionalidad> listaNacionalidades = iNacionalidadNegocio.listarNacionalidades();
+            ArrayList<Provincia> listaProvincias = iProvinciaNegocio.listarProvincias();
+            ArrayList<Localidad> listaLocalidades = iLocalidadNegocio.listarLocalidades();
+
+            request.setAttribute("cliente", _cliente);
+            request.setAttribute("listaProvincias", listaProvincias);
+            request.setAttribute("listaLocalidades", listaLocalidades);
+            request.setAttribute("listaNacionalidades", listaNacionalidades);
+            
+            request.setAttribute("errorMessage", e.getMessage());
+            
             RequestDispatcher dispatcher = request.getRequestDispatcher("AdminEditarCliente.jsp");
             dispatcher.forward(request, response);
         }
