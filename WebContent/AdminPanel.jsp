@@ -45,8 +45,8 @@
 			<div class="col-md-3">
 				<div class="card card-superior">
 					<div class="card-body">
-						<h6 class="card-subtitle mb-2 text-muted">Total cuentas</h6>
-						<h4 class="card-title">4240</h4>
+						<h6 class="card-subtitle mb-2 text-muted">Cuentas activas</h6>
+						<h4 class="card-title">${totalCuentas}</h4>
 					</div>
 				</div>
 			</div>
@@ -55,81 +55,15 @@
 				<div class="card card-superior">
 					<div class="card-body">
 						<h6 class="card-subtitle mb-2 text-muted">Préstamos activos</h6>
-						<h4 class="card-title">130</h4>
+						<h4 class="card-title">${totalPrestamosActivos}</h4>
 					</div>
 				</div>
 			</div>
 		</div>
 
-		<div class="card">
-			<div class="card-body">
-				<div class="d-flex justify-content-between align-items-center mb-4">
-					<h5 class="card-title">Período 01/01/2021 - 01/01/2022</h5>
-					<button class="btn btn-general">Aplicar filtro</button>
-				</div>
-				<canvas id="statsChart"></canvas>
-			</div>
-		</div>
 	</div>
 
 	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
-	<script>
-	    const ctx = document.getElementById('statsChart').getContext('2d');
-	    const myChart = new Chart(ctx, {
-	    	type: 'bar'
-
-        	
-	        data: {
-	            labels: ['Enero', 'Febrero', 'Marzo', 'Abril', 'Mayo', 'Junio', 'Julio', 'Agosto', 'Septiembre', 'Octubre', 'Noviembre', 'Diciembre'],
-	            datasets: [
-	                {
-	                    label: 'Transferencias realizadas',
-	                    data: [2500, 2000, 2000, 3000, 2000, 2000, 2000, 2000, 2000, 4000, 3000, 3000],
-	                    backgroundColor: '#8884d8'
-	                },
-	                {
-	                    label: 'Préstamos otorgados',
-	                    data: [3200, 1800, 1500, 1800, 2800, 3800, 3500, 3500, 3200, 3200, 3500, 3800],
-	                    backgroundColor: '#ffa726'
-	                }
-	            ]
-	        },
-	        options: {
-	            responsive: true,
-	            scales: {
-	                y: {
-	                    beginAtZero: true,
-	                    max: 5000,
-	                    ticks: {
-	                        stepSize: 1000,
-	                        font: {
-	                            size: 20, 
-	                        }
-	                    }
-	                },
-	                x: {
-	                    ticks: {
-	                        font: {
-	                            size: 20, 
-	                        },
-	                        autoSkip: false,  
-	                        maxRotation: 0,  
-	                        minRotation: 0,   
-	                    }
-	                }
-	            },
-	            plugins: {
-	                legend: {
-	                    position: 'bottom',
-	                    labels: {
-	                        font: {
-	                            size: 20 
-	                        }
-	                    }
-	                }
-	            }
-	        }
-	    });
-	</script>
+	
 </body>
 </html>

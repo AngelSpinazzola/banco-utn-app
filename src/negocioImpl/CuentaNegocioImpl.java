@@ -92,15 +92,20 @@ public class CuentaNegocioImpl implements ICuentaNegocio{
 		
 		return true;
 	}
+	
+	@Override
 	public boolean validarSaldo(BigDecimal monto, String cbuOrigen) {
 		boolean resultado = iCuentaDao.validarSaldo(monto, cbuOrigen);
 		return resultado;
 	}
+	
+	@Override
 	public boolean validarCuentaDestino(String cbuDestino) {
 		boolean resultado = iCuentaDao.validarCuentaDestino(cbuDestino);
 		return resultado;
 	}
 	
+	@Override
 	public boolean realizarTransferencia(String cbuOrigen, String cbuDestino, String monto) {
 		boolean resultado = iCuentaDao.transferir(cbuOrigen, cbuDestino, monto);
 		return resultado;
@@ -111,6 +116,13 @@ public class CuentaNegocioImpl implements ICuentaNegocio{
 		boolean resultado = iCuentaDao.tieneCuentas(idCliente);
 		
 		return resultado;
+	}
+	
+	@Override
+	public int getTotalCuentasActivas() {
+		int totalCuentas = iCuentaDao.getTotalCuentasActivas();
+		
+		return totalCuentas;
 	}
 
 }

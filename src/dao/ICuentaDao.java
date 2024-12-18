@@ -15,4 +15,5 @@ public interface ICuentaDao {
 	public boolean transferir(String cbuOrigen, String cbuDestino, String _monto);
 	
 	public boolean tieneCuentas(int idCliente);
+	public int getTotalCuentasActivas();
 }

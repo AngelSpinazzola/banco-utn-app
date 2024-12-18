@@ -22,4 +22,5 @@ public interface IPrestamoNegocio {
 	
 	public BigDecimal totalOtorgadoEnPrestamos();
 	public int getPrestamosCountPorCliente(int idCliente);
+	public int getPrestamosActivosCount();
 }

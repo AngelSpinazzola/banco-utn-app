@@ -429,6 +429,26 @@ public class PrestamoDaoImpl implements IPrestamoDao {
 		}
 		return totalPrestamos;
 	}
+	
+	@Override
+	public int getPrestamosActivosCount() {
+		String query = "select count(*) from prestamos where Estado = 1";
+		
+		int totalPrestamosActivos = 0;
+		
+		try (Connection conexion = Conexion.getConnection();
+		   PreparedStatement statement = conexion.prepareStatement(query)) {
+
+			try (ResultSet rs = statement.executeQuery()) {
+				if (rs.next()) {
+					totalPrestamosActivos = rs.getInt(1); 
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return totalPrestamosActivos;
+	}
 
 
 

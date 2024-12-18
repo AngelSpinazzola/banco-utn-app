@@ -21,4 +21,5 @@ public interface IPrestamoDao {
 	public BigDecimal getTotalOtorgadoEnPrestamos();
 	
 	public int getPrestamosCountPorCliente(int idCliente);
+	public int getPrestamosActivosCount();
 }

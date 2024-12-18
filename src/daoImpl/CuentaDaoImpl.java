@@ -212,7 +212,7 @@ public class CuentaDaoImpl implements ICuentaDao {
 	
 	@Override
 	public boolean tieneCuentas(int idCliente) {
-	    String query = "SELECT COUNT(*) > 0 AS tieneCuentas FROM cuentas WHERE IDCliente = ?";
+	    String query = "SELECT COUNT(*) > 0 AS tieneCuentas FROM cuentas WHERE IDCliente = ? and ESTADO = 1";
 	    
 	    try (Connection conexion = Conexion.getConnection();
 	         PreparedStatement st = conexion.prepareStatement(query)) {
@@ -228,6 +228,26 @@ public class CuentaDaoImpl implements ICuentaDao {
 	    }
 	    
 	    return false;
+	}
+	
+	@Override
+	public int getTotalCuentasActivas() {
+		String query = "select count(*) from cuentas where ESTADO = 1";
+		
+		int totalCuentas = 0;
+		
+		try (Connection conexion = Conexion.getConnection();
+		   PreparedStatement statement = conexion.prepareStatement(query)) {
+
+			try (ResultSet rs = statement.executeQuery()) {
+				if (rs.next()) {
+					totalCuentas = rs.getInt(1); 
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return totalCuentas;
 	}
 
 

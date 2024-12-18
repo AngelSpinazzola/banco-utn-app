@@ -13,9 +13,11 @@ import javax.servlet.http.HttpServletResponse;
 
 import entidad.DatosDashboard;
 import negocio.IClienteNegocio;
+import negocio.ICuentaNegocio;
 import negocio.IMovimientoNegocio;
 import negocio.IPrestamoNegocio;
 import negocioImpl.ClienteNegocioImpl;
+import negocioImpl.CuentaNegocioImpl;
 import negocioImpl.MovimientoNegocioImpl;
 import negocioImpl.PrestamoNegocioImpl;
 
@@ -26,6 +28,7 @@ public class DashboardServlet extends HttpServlet {
     IMovimientoNegocio iMovimientoNegocio = new MovimientoNegocioImpl(); 
     IPrestamoNegocio iPrestamoNegocio = new PrestamoNegocioImpl();
     IClienteNegocio iClienteNegocio = new ClienteNegocioImpl();
+    ICuentaNegocio iCuentaNegocio = new CuentaNegocioImpl();
     
     public DashboardServlet() {
         super();
@@ -36,11 +39,15 @@ public class DashboardServlet extends HttpServlet {
         
         BigDecimal totalOtorgadoEnPrestamos = BigDecimal.ZERO;
         int totalClientes = iClienteNegocio.getTotalClientesCount();
+        int totalCuentas = iCuentaNegocio.getTotalCuentasActivas();
+        int totalPrestamosActivos = iPrestamoNegocio.getPrestamosActivosCount();
         
         totalOtorgadoEnPrestamos = iPrestamoNegocio.totalOtorgadoEnPrestamos();
         
         request.setAttribute("totalClientes", totalClientes);
         request.setAttribute("totalOtorgadoEnPrestamos", totalOtorgadoEnPrestamos);
+        request.setAttribute("totalCuentas", totalCuentas);
+        request.setAttribute("totalPrestamosActivos", totalPrestamosActivos);
         
         RequestDispatcher dispatcher = request.getRequestDispatcher("/AdminPanel.jsp");
 	    dispatcher.forward(request, response);

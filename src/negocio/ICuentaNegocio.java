@@ -17,4 +17,5 @@ public interface ICuentaNegocio {
 	public BigDecimal getSaldoCuentaCliente(int idCuenta);
 	
 	public boolean tieneCuentas(int idCliente);
+	public int getTotalCuentasActivas();
 }	

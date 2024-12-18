@@ -144,6 +144,13 @@ public class PrestamoNegocioImpl implements IPrestamoNegocio{
 		
 		return total;
 	}
+	
+	@Override
+	public int getPrestamosActivosCount() {
+		int total = iPrestamoDao.getPrestamosActivosCount();
+		
+		return total;
+	}
 
 
 }
