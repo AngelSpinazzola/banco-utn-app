@@ -23,4 +23,8 @@ public interface IPrestamoNegocio {
 	public BigDecimal totalOtorgadoEnPrestamos();
 	public int getPrestamosCountPorCliente(int idCliente);
 	public int getPrestamosActivosCount();
+	
+	//Métodos para reportes
+	public int getCantidadPrestamosPorAnio(int anio);
+	public BigDecimal getMontoPrestamosPorAnio(int anio);
 }

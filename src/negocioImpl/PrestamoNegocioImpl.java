@@ -1,8 +1,12 @@
 package negocioImpl;
 
 import java.math.BigDecimal;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.util.ArrayList;
 import dao.IPrestamoDao;
+import daoImpl.Conexion;
 import daoImpl.PrestamoDaoImpl;
 import entidad.Cuenta;
 import entidad.Prestamo;
@@ -150,6 +154,48 @@ public class PrestamoNegocioImpl implements IPrestamoNegocio{
 		int total = iPrestamoDao.getPrestamosActivosCount();
 		
 		return total;
+	}
+	
+	// Métodos para reportes 
+	@Override
+	public int getCantidadPrestamosPorAnio(int anio) {
+		String query = "select count(*) as cant from prestamos where year(fecha) = ? and Estado = 0";
+		
+		int totalPrestamos = 0;
+		
+		try (Connection conexion = Conexion.getConnection();
+		   PreparedStatement statement = conexion.prepareStatement(query)) {
+		   statement.setInt(1, anio);	
+			try (ResultSet rs = statement.executeQuery()) {
+				if (rs.next()) {
+					totalPrestamos = rs.getInt(1); 
+				}
+			}
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return totalPrestamos;
+	}
+	
+	@Override
+	public BigDecimal getMontoPrestamosPorAnio(int anio) {
+		String query = "SELECT SUM(p.ImporteAPagar) AS suma_prestamos FROM prestamos p WHERE YEAR(p.fecha) = ? and p.Estado = 0";
+		
+		BigDecimal suma = BigDecimal.ZERO;
+		
+		try (Connection conn = Conexion.getConnection(); 
+				PreparedStatement ps = conn.prepareStatement(query)) {
+			ps.setInt(1, anio);
+			ResultSet rs = ps.executeQuery();
+			
+			if (rs.next()) {
+				suma = rs.getBigDecimal("suma_prestamos");
+			}
+			
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return suma;
 	}
 
 
