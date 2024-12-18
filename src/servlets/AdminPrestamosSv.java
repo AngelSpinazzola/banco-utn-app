@@ -2,24 +2,21 @@ package servlets;
 
 import java.io.IOException;
 import java.util.ArrayList;
-
-import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
 import javax.servlet.annotation.WebServlet;
 import javax.servlet.http.HttpServlet;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
-
 import entidad.Prestamo;
 import negocio.IPrestamoNegocio;
 import negocioImpl.PrestamoNegocioImpl;
 
-@WebServlet("/AdminPrestamosActivosSv")
-public class AdminPrestamosActivosSv extends HttpServlet {
+@WebServlet("/AdminPrestamosSv")
+public class AdminPrestamosSv extends HttpServlet {
 	private static final long serialVersionUID = 1L;
 	private IPrestamoNegocio iPrestamoNegocio = new PrestamoNegocioImpl();   
 	
-    public AdminPrestamosActivosSv() {
+    public AdminPrestamosSv() {
         super();
     }
 
@@ -30,23 +27,17 @@ public class AdminPrestamosActivosSv extends HttpServlet {
         int page = (pageParam != null && !pageParam.isEmpty()) ? Integer.parseInt(pageParam) : 1;
         int pageSize = (pageSizeParam != null && !pageSizeParam.isEmpty()) ? Integer.parseInt(pageSizeParam) : 5;
 
-        // Obtener los préstamos activos según la página y el tamaño de página
-        ArrayList<Prestamo> listaPrestamos = iPrestamoNegocio.getPrestamosActivos(page, pageSize);
+        ArrayList<Prestamo> listaPrestamos = iPrestamoNegocio.getPrestamos(page, pageSize);
 
-        // Calcular el total de préstamos activos
-        int totalPrestamos = iPrestamoNegocio.getTotalPrestamosActivosCount();
-
-        // Calcular el número total de páginas
+        int totalPrestamos = iPrestamoNegocio.getTotalPrestamosCount();
         int totalPaginas = (int) Math.ceil((double) totalPrestamos / pageSize);
 
-        // Configurar los atributos en el request
-        request.setAttribute("prestamosActivos", listaPrestamos);
+        request.setAttribute("prestamos", listaPrestamos);
         request.setAttribute("totalPrestamos", totalPrestamos);
         request.setAttribute("totalPaginas", totalPaginas);
         request.setAttribute("paginaActual", page);
 
-        // Redirigir al JSP correspondiente
-        request.getRequestDispatcher("/AdminPrestamosActivos.jsp").forward(request, response);
+        request.getRequestDispatcher("/AdminPrestamos.jsp").forward(request, response);
     }
 
 

@@ -10,19 +10,15 @@
   </filter>
   <filter-mapping>
     <filter-name>AuthFilter</filter-name>
-    <url-pattern>/AdminPanel.jsp</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>AuthFilter</filter-name>
-    <url-pattern>/AdminGestionClientes.jsp</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>AuthFilter</filter-name>
     <url-pattern>/AdminAltaCliente.jsp</url-pattern>
   </filter-mapping>
   <filter-mapping>
     <filter-name>AuthFilter</filter-name>
-    <url-pattern>/AdminDetalleCliente.jsp</url-pattern>
+    <url-pattern>/AdminCuentasCliente.jsp</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>AuthFilter</filter-name>
+    <url-pattern>/AdminDetallesCliente.jsp</url-pattern>
   </filter-mapping>
   <filter-mapping>
     <filter-name>AuthFilter</filter-name>
@@ -30,7 +26,15 @@
   </filter-mapping>
   <filter-mapping>
     <filter-name>AuthFilter</filter-name>
-    <url-pattern>/AdminPrestamosActivos.jsp</url-pattern>
+    <url-pattern>/AdminGestionClientes.jsp</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>AuthFilter</filter-name>
+    <url-pattern>/AdminPanel.jsp</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>AuthFilter</filter-name>
+    <url-pattern>/AdminPrestamos.jsp</url-pattern>
   </filter-mapping>
   <filter-mapping>
     <filter-name>AuthFilter</filter-name>
@@ -38,11 +42,7 @@
   </filter-mapping>
   <filter-mapping>
     <filter-name>AuthFilter</filter-name>
-    <url-pattern>/AdminResumenPrestamos.jsp</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>AuthFilter</filter-name>
-    <url-pattern>/ClientePanel.jsp</url-pattern>
+    <url-pattern>/ClienteConfirmarTransferencia.jsp</url-pattern>
   </filter-mapping>
   <filter-mapping>
     <filter-name>AuthFilter</filter-name>
@@ -50,22 +50,22 @@
   </filter-mapping>
   <filter-mapping>
     <filter-name>AuthFilter</filter-name>
-    <url-pattern>/ClienteMovimientos.jsp</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>AuthFilter</filter-name>
-    <url-pattern>/ClienteTransferir.jsp</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>AuthFilter</filter-name>
-    <url-pattern>/MisPrestamos.jsp</url-pattern>
-  </filter-mapping>
-  <filter-mapping>
-    <filter-name>AuthFilter</filter-name>
     <url-pattern>/ClientePagarCuotas.jsp</url-pattern>
   </filter-mapping>
   <filter-mapping>
     <filter-name>AuthFilter</filter-name>
-    <url-pattern>/Prestamos.jsp</url-pattern>
+    <url-pattern>/ClientePanel.jsp</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>AuthFilter</filter-name>
+    <url-pattern>/ClientePrestamos.jsp</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>AuthFilter</filter-name>
+    <url-pattern>/ClienteSolicitarPrestamo.jsp</url-pattern>
+  </filter-mapping>
+  <filter-mapping>
+    <filter-name>AuthFilter</filter-name>
+    <url-pattern>/ClienteTransferir.jsp</url-pattern>
   </filter-mapping>
 </web-app>

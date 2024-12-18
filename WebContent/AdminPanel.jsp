@@ -21,26 +21,24 @@
 
 		<div class="row mb-4">
 			<div class="col-md-3">
-				<div class="card card-superior">
-					<div class="card-body">
-						<h6 class="card-subtitle mb-2 text-muted">Fondos totales</h6>
-						<h4 class="card-title">$25.620.000,00</h4>
-						<p class="card-text text-success">
-							<i class="fas fa-arrow-up"></i> 12% vs mes anterior
-						</p>
-					</div>
-				</div>
-			</div>
+	            <div class="card card-superior">
+	                <div class="card-body">
+	                    <h6 class="card-subtitle mb-2 text-muted">Total dinero otorgado</h6>
+	                    <h4 class="card-title">
+	                        $<%= request.getAttribute("totalOtorgadoEnPrestamos") != null 
+	                            ? ((java.math.BigDecimal) request.getAttribute("totalOtorgadoEnPrestamos")).toPlainString() 
+	                            : "0.00" %>
+	                    </h4>
+	                </div>
+	            </div>
+        	</div>
 
 			<div class="col-md-3">
 				<div class="card card-superior">
-					<div class="card-body">
-						<h6 class="card-subtitle mb-2 text-muted">Deuda clientes</h6>
-						<h4 class="card-title">$1.560.000,00</h4>
-						<p class="card-text text-danger">
-							<i class="fas fa-arrow-down"></i> 10% vs mes anterior
-						</p>
-					</div>
+					  <div class="card-body">
+			            <h6 class="card-subtitle mb-2 text-muted">Total clientes</h6>
+			            <h4 class="card-title">${totalClientes}</h4>
+			        </div>
 				</div>
 			</div>
 
@@ -49,9 +47,6 @@
 					<div class="card-body">
 						<h6 class="card-subtitle mb-2 text-muted">Total cuentas</h6>
 						<h4 class="card-title">4240</h4>
-						<p class="card-text text-success">
-							<i class="fas fa-arrow-up"></i> 25% vs mes anterior
-						</p>
 					</div>
 				</div>
 			</div>
@@ -61,9 +56,6 @@
 					<div class="card-body">
 						<h6 class="card-subtitle mb-2 text-muted">Préstamos activos</h6>
 						<h4 class="card-title">130</h4>
-						<p class="card-text text-danger">
-							<i class="fas fa-arrow-down"></i> 3% vs mes anterior
-						</p>
 					</div>
 				</div>
 			</div>
@@ -80,8 +72,7 @@
 		</div>
 	</div>
 
-	<script
-		src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
+	<script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/3.7.0/chart.min.js"></script>
 	<script>
 	    const ctx = document.getElementById('statsChart').getContext('2d');
 	    const myChart = new Chart(ctx, {
@@ -140,6 +131,5 @@
 	        }
 	    });
 	</script>
-
 </body>
 </html>

@@ -210,6 +210,25 @@ public class CuentaDaoImpl implements ICuentaDao {
 		return false;
 	}
 	
+	@Override
+	public boolean tieneCuentas(int idCliente) {
+	    String query = "SELECT COUNT(*) > 0 AS tieneCuentas FROM cuentas WHERE IDCliente = ?";
+	    
+	    try (Connection conexion = Conexion.getConnection();
+	         PreparedStatement st = conexion.prepareStatement(query)) {
+	        st.setInt(1, idCliente);
+	        
+	        try (ResultSet rs = st.executeQuery()) {
+	            if (rs.next()) {
+	                return rs.getBoolean("tieneCuentas");
+	            }
+	        }
+	    } catch (SQLException e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return false;
+	}
 
 
 }

@@ -2,6 +2,7 @@ package negocio;
 
 import java.util.ArrayList;
 
+import entidad.DatosDashboard;
 import entidad.Movimiento;
 
 public interface IMovimientoNegocio {

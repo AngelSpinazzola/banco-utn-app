@@ -13,4 +13,6 @@ public interface ICuentaDao {
 	public boolean validarSaldo(BigDecimal monto, String cbuOrigen);
 	public boolean validarCuentaDestino(String cbuDestino);
 	public boolean transferir(String cbuOrigen, String cbuDestino, String _monto);
+	
+	public boolean tieneCuentas(int idCliente);
 }

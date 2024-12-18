@@ -193,6 +193,7 @@ CREATE PROCEDURE SP_ListarClientesPaginado(
 BEGIN
     SELECT
 		c.IDCliente AS idCliente,
+        c.CUIL as cuil,
         c.DNI AS dni,
         c.Nombre AS nombre,
         c.Apellido AS apellido,
@@ -204,7 +205,7 @@ BEGIN
         cuentas cu ON cu.IDCliente = c.IDCliente
 	INNER JOIN
 		usuarios u ON u.IDUsuario = c.IDUsuario
-	WHERE u.TipoUsuario = 2
+	WHERE u.TipoUsuario = 2 and c.Estado = 1
     GROUP BY 
         c.DNI, c.Nombre, c.Apellido, c.Estado
     LIMIT p_limit OFFSET p_offset;
@@ -611,7 +612,7 @@ DELIMITER ;
 -- Procedure que devuelve listado paginado con los préstamos activos
 DELIMITER //
 
-CREATE PROCEDURE SP_ListarPrestamosActivos(
+CREATE PROCEDURE SP_ListarPrestamos(
     IN limite INT, 
     IN offset INT
 )
@@ -636,7 +637,7 @@ BEGIN
     INNER JOIN cuentas cu ON cu.IDCuenta = p.IDCuenta
     INNER JOIN clientes c ON c.IDCliente = cu.IDCliente
     INNER JOIN movimientos m ON m.IDCuentaEmisor = cu.IDCuenta
-    WHERE p.Estado = 1
+    WHERE p.Estado != 0
     GROUP BY p.IDPrestamo, c.Nombre, c.Apellido, p.MontoPedido, p.ImporteAPagar, tp.Tipo, p.Estado
     LIMIT limite OFFSET offset;
 END //

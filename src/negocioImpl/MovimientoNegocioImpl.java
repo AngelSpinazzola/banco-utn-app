@@ -4,6 +4,7 @@ import java.util.ArrayList;
 
 import dao.IMovimientoDao;
 import daoImpl.MovimientoDaoImpl;
+import entidad.DatosDashboard;
 import entidad.Movimiento;
 import entidad.Prestamo;
 import negocio.IMovimientoNegocio;
@@ -37,4 +38,5 @@ public class MovimientoNegocioImpl implements IMovimientoNegocio{
 	    int totalMovimientos = getTotalMovimientos(idCliente);
 	    return (int) Math.ceil((double) totalMovimientos / pageSize);
 	}
+	
 }

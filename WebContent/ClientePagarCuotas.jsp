@@ -147,24 +147,27 @@
 										}
 									%>
 									<td>
-                                    
-                                    	<%
+                                   	<%
+                                    	java.util.Date fechaActual = new java.util.Date();
+                                    	java.util.Date fechaVencimiento = cuota.getFechaVencimientoCuota();
+                                    	
 										int estadoInt = cuota.isEstado();
-												String estado = "";
-												String claseEstado = "";
-												if (estadoInt == 0) {
-													estado = "Pendiente";
-													claseEstado = "pending";
-												} else if (estadoInt == 1) {
-													estado = "Pagada";
-													claseEstado = "approved";
-												} else if (estadoInt == 2) {
-													estado = "Vencida";
-													claseEstado = "rejected";
-												}
-										%> <span class="status <%=claseEstado%>"><%=estado%></span>
+										String estado = "";
+										String claseEstado = "";
+										 if (estadoInt == 0 && fechaVencimiento.before(fechaActual)) {
+								            estado = "Vencida";
+								            claseEstado = "rejected"; 
+								        } else if (estadoInt == 0) {
+								            estado = "Pendiente";
+								            claseEstado = "pending"; 
+								        } else if (estadoInt == 1) {
+								            estado = "Pagada";
+								            claseEstado = "approved"; 
+								        }
+									%> 
+									<span class="status <%=claseEstado%>"><%=estado%></span>
 									</td>
-							
+						
 						
 								</tr>
 								<%

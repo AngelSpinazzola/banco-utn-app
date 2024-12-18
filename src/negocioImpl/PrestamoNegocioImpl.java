@@ -1,5 +1,6 @@
 package negocioImpl;
 
+import java.math.BigDecimal;
 import java.util.ArrayList;
 import dao.IPrestamoDao;
 import daoImpl.PrestamoDaoImpl;
@@ -119,15 +120,30 @@ public class PrestamoNegocioImpl implements IPrestamoNegocio{
 	}
 	
 	@Override
-	public int getTotalPrestamosActivosCount() {
-		return iPrestamoDao.getTotalPrestamosActivosCount();
+	public int getTotalPrestamosCount() {
+		return iPrestamoDao.getTotalPrestamosCount();
 	}
 	
 	@Override
-	public ArrayList<Prestamo> getPrestamosActivos(int page, int pageSize){
-		ArrayList<Prestamo> prestamos = iPrestamoDao.getPrestamosActivos(page, pageSize); 
+	public ArrayList<Prestamo> getPrestamos(int page, int pageSize){
+		ArrayList<Prestamo> prestamos = iPrestamoDao.getPrestamos(page, pageSize); 
 		
 		return prestamos;
 	}
+	
+	@Override
+	public BigDecimal totalOtorgadoEnPrestamos() {
+		BigDecimal saldo = iPrestamoDao.getTotalOtorgadoEnPrestamos();
+		
+		return saldo;
+	}
+	
+	@Override
+	public int getPrestamosCountPorCliente(int idCliente) {
+		int total = iPrestamoDao.getPrestamosCountPorCliente(idCliente);
+		
+		return total;
+	}
+
 
 }

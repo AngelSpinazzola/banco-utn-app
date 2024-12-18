@@ -1,6 +1,8 @@
 package dao;
 
 import java.util.ArrayList;
+
+import entidad.DatosDashboard;
 import entidad.Movimiento;
 
 public interface IMovimientoDao {

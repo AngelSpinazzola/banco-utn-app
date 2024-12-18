@@ -149,9 +149,6 @@
 				<a href="ClienteTransferirSv"><i class="fa-solid fa-money-bill-transfer"></i>Transferir</a>
 			</div>
 			<div class="item">
-				<a href="ClienteMovimientos.jsp"><i class="fas fa-exchange-alt"></i>Movimientos</a>
-			</div>
-			<div class="item">
 				<a class="sub-btn"><i class="fas fa-wallet"></i>Préstamos<i class="fas fa-angle-right dropdown"></i></a>
 				<div class="sub-menu">
 					<a href="ClienteSolicitudPrestamoSv"class="sub-item"><i class="fa-solid fa-hand-holding-dollar"></i>Solicita tu préstamo</a> 

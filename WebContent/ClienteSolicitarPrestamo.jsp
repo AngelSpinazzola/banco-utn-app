@@ -51,6 +51,48 @@ label+label {
 	text-align: right;
 	margin-top: 2rem;
 }
+.form-title {
+    text-align: center;
+    color: #333;
+    margin-bottom: 30px;
+    padding-right: 730px;
+    padding-top: 20px;
+}
+.btn-cancelar{
+    padding: 10px 20px;
+    border-radius: 6px;
+    width: 150px;
+    transition: all 0.3s ease;
+    margin-left: 0; 
+}
+
+.btn-seccion {
+    display: flex; 
+    justify-content: space-between; 
+    align-items: center; 
+    gap: 10px; 
+}
+
+.btn-secondary {
+    background-color: #6c757d;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+}
+
+.btn-solicitar {
+    background-color: #157347;
+    width: 500px;
+    color: white;
+    border: none;
+    padding: 8px 15px;
+}
+
+.btn:hover {
+    background-color: #d0d0d0;
+    opacity: 0.9;
+}
+
 </style>
 <%@ include file="Componentes/Head.jsp"%>
 </head>
@@ -59,7 +101,8 @@ label+label {
 	<jsp:include page="Componentes/Navbar.jsp"></jsp:include>
 	<form action="ClienteSolicitudPrestamoSv" method="post">
 		
-		<div class="d-flex flex-column justify-content-center align-items-center vh-100">
+		<h3 class="form-title">Solicitá tu préstamo</h3>
+		<div class="d-flex flex-column justify-content-center align-items-center">
 			<div class="contenedor-principal p-4 bg-light border rounded">
 				  <div class="form-group">
                     <label for="monto">Monto</label> 
@@ -117,8 +160,8 @@ label+label {
 			</div>
 
 			<div class="btn-seccion contenedor-principal">
-				<a href="ClientePanelSv" class="btn btn-secondary">Cancelar</a>
-				<button type="submit" class="btn btn-primary">Solicitar</button>
+				<a href="ClientePanelSv" class="btn btn-secondary btn-cancelar" style="padding: 7px">Cancelar</a>
+				<button type="submit" class="btn btn-primary btn-solicitar" style="background-color: #157347; hover:background-color: #d0d0d0; border:none; padding: 10px">Solicitar</button>
 			</div>
 		</div>
 	</form>

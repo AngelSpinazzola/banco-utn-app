@@ -136,7 +136,8 @@ th {
 }
 
 .pending {
-	background-color: #ffd700;
+	background-color: #3279FC;
+	color: white;
 }
 
 .rejected {
@@ -358,16 +359,13 @@ th {
 								int estadoInt = prestamo.getEstado();
 										String estado = "";
 										String claseEstado = "";
-										if (estadoInt == 0) {
-											estado = "Pendiente";
+										if (estadoInt == 3) {
+											estado = "Finalizado";
 											claseEstado = "pending";
 										} else if (estadoInt == 1) {
 											estado = "Aprobado";
 											claseEstado = "approved";
-										} else if (estadoInt == 2) {
-											estado = "Rechazado";
-											claseEstado = "rejected";
-										}
+										} 
 							%> <span class="status <%=claseEstado%>"><%=estado%></span>
 						</td>
 					</tr>

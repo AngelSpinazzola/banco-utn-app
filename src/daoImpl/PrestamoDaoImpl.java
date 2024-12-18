@@ -1,5 +1,6 @@
 package daoImpl;
 
+import java.math.BigDecimal;
 import java.sql.CallableStatement;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -122,8 +123,8 @@ public class PrestamoDaoImpl implements IPrestamoDao {
 	}
 	
 	@Override 
-	public int getTotalPrestamosActivosCount() {
-		String query = "select count(*) from prestamos where Estado = 1";
+	public int getTotalPrestamosCount() {
+		String query = "select count(*) from prestamos where Estado != 0";
 		
 		int totalPrestamosActivos = 0;
 
@@ -145,12 +146,12 @@ public class PrestamoDaoImpl implements IPrestamoDao {
 	}
 	
 	@Override
-	public ArrayList<Prestamo> getPrestamosActivos(int page, int pageSize){
+	public ArrayList<Prestamo> getPrestamos(int page, int pageSize){
 		ArrayList<Prestamo> prestamos = new ArrayList<>();
 
 		int offset = (page - 1) * pageSize;
 		
-		String query = "{CALL SP_ListarPrestamosActivos(?,?)}";
+		String query = "{CALL SP_ListarPrestamos(?,?)}";
 		
 		try (Connection conn = Conexion.getConnection(); PreparedStatement ps = conn.prepareStatement(query)) {
 			ps.setInt(1, pageSize);
@@ -383,6 +384,52 @@ public class PrestamoDaoImpl implements IPrestamoDao {
 	    }
 	    return false;
 	}
+	
+	
+	@Override
+	public BigDecimal getTotalOtorgadoEnPrestamos() {
+	    String query = "SELECT SUM(p.MontoPedido) AS saldo FROM prestamos p WHERE p.Estado != 0";
+	    BigDecimal saldo = BigDecimal.ZERO;
+	    
+	    try (Connection conn = Conexion.getConnection(); 
+	         PreparedStatement ps = conn.prepareStatement(query)) {
+	        ResultSet rs = ps.executeQuery();
+	        
+	        if (rs.next()) {
+	        	saldo = rs.getBigDecimal("saldo");
+	        }
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    return saldo;
+	}
+	
+	@Override
+	public int getPrestamosCountPorCliente(int idCliente) {
+		String query = "select count(p.IDPrestamo) as cant from prestamos p\r\n" + 
+				"inner join cuentas cu on cu.IDCuenta = p.IDCuenta\r\n" + 
+				"where cu.IDCliente = ? and p.Estado != 0";
+		
+		int totalPrestamos = 0;
+		
+		try (Connection conexion = Conexion.getConnection();
+				PreparedStatement statement = conexion.prepareStatement(query)) {
+
+			statement.setInt(1, idCliente);
+
+			try (ResultSet rs = statement.executeQuery()) {
+				if (rs.next()) {
+					totalPrestamos = rs.getInt(1); 
+				}
+			}
+
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+		return totalPrestamos;
+	}
+
 
 
 }

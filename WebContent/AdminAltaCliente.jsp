@@ -115,7 +115,7 @@ body {
 }
 
 .btn:hover {
-    opacity: 0.9;
+    color: white;
 }
 
 #passwordError {
@@ -370,7 +370,7 @@ body {
 			</div>
 	        <div class="form-actions">
 	            <button type="button" class="btn btn-secondary btn-volver" onclick="window.location.href='ListarClientesSv'">Volver</button>
-	            <button type="submit" form="form-alta" class="btn btn-nuevo-cliente">Dar alta</button>
+	            <button type="submit" form="form-alta" class="btn btn-nuevo-cliente" style="background-color: #157347; hover:background-color: #d0d0d0;">Dar alta</button>
 	        </div>
 		</div>
 </body>

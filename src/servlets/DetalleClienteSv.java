@@ -43,8 +43,9 @@ public class DetalleClienteSv extends HttpServlet {
 	    ArrayList<Prestamo> prestamos = iPrestamoNegocio.getPrestamosPorCliente(Integer.parseInt(idCliente), page, pageSize);
 	    ArrayList<Cuenta> cuentas = iCuentaNegocio.getCuentasDelCliente(Integer.parseInt(idCliente));
 	    
-	    int totalPrestamos = iPrestamoNegocio.getTotalPrestamosCount(Integer.parseInt(idCliente));
-        int totalPaginas = (int) Math.ceil((double) totalPrestamos / pageSize);
+	    int totalPrestamos = iPrestamoNegocio.getPrestamosCountPorCliente(Integer.parseInt(idCliente));
+        
+	    int totalPaginas = (int) Math.ceil((double) totalPrestamos / pageSize);
         
 	    request.setAttribute("cliente", cliente);
 	    request.setAttribute("prestamos", prestamos);

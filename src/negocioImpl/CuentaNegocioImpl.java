@@ -105,5 +105,12 @@ public class CuentaNegocioImpl implements ICuentaNegocio{
 		boolean resultado = iCuentaDao.transferir(cbuOrigen, cbuDestino, monto);
 		return resultado;
 	}
+	
+	@Override
+	public boolean tieneCuentas(int idCliente) {
+		boolean resultado = iCuentaDao.tieneCuentas(idCliente);
+		
+		return resultado;
+	}
 
 }

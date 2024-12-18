@@ -155,6 +155,7 @@ public class ClienteDaoImpl implements IClienteDao {
 					Cliente cliente = new Cliente();
 					cliente.setIdCliente(rs.getInt("idCliente"));
 					cliente.setDni(rs.getString("dni"));
+					cliente.setCuil(rs.getString("cuil"));
 					cliente.setNombre(rs.getString("nombre"));
 					cliente.setApellido(rs.getString("apellido"));
 					cliente.setEstado(rs.getInt("estado") == 1);
@@ -174,7 +175,7 @@ public class ClienteDaoImpl implements IClienteDao {
 	@Override
 	public int getTotalClientesCount() {
 		String query = "SELECT COUNT(*) FROM CLIENTES c " + "LEFT JOIN Usuarios u ON u.IDUsuario = c.IDUsuario "
-				+ "WHERE u.TipoUsuario = 2";
+				+ "WHERE u.TipoUsuario = 2 and c.Estado != 0";
 
 		int totalClientes = 0;
 

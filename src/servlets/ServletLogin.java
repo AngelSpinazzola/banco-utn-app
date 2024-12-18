@@ -43,7 +43,7 @@ public class ServletLogin extends HttpServlet {
 		session.setAttribute("usuario", usuarioLogin);
 
 		if (usuarioLogin.getTipo().codigo == 1) {
-			response.sendRedirect("AdminPanel.jsp");
+			response.sendRedirect("DashboardServlet");
 		} else if (usuarioLogin.getTipo().codigo == 2) {
 			response.sendRedirect("ClientePanelSv");
 		}

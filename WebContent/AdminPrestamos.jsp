@@ -101,6 +101,25 @@
 			font-size: 1rem; 
 			margin-right: auto; 
 		}
+		.estado-en-curso {
+		    background-color: #ffeb99; /* Amarillo claro */
+		    color: #856404; /* Marrón oscuro */
+		    font-weight: bold;
+		    border: 1px solid #ffd966; /* Borde amarillo */
+		    border-radius: 5px;
+		    text-align: center;
+		    padding: 5px;
+		}
+		
+		.estado-finalizado {
+		    background-color: #d4edda; /* Verde claro */
+		    color: #155724; /* Verde oscuro */
+		    font-weight: bold;
+		    border: 1px solid #c3e6cb; /* Borde verde */
+		    border-radius: 5px;
+		    text-align: center;
+		    padding: 5px;
+		}
 		
     </style>
 	<%@ include file="Componentes/Head.jsp"%>
@@ -109,10 +128,10 @@
 	<%@ include file="Componentes/NavbarAdmin.jsp"%>
 	
     <div class="container mt-5" style="margin-bottom: 40px;">
-        <h4 class="card-title text-left" style="margin-bottom: 40px;">Préstamos activos</h4>
+        <h4 class="card-title text-left" style="margin-bottom: 40px;">Préstamos</h4>
         <%
-            ArrayList<Prestamo> prestamosActivos = (ArrayList<Prestamo>) request.getAttribute("prestamosActivos");
-            if (prestamosActivos != null && !prestamosActivos.isEmpty()) {
+            ArrayList<Prestamo> prestamos = (ArrayList<Prestamo>) request.getAttribute("prestamos");
+            if (prestamos != null && !prestamos.isEmpty()) {
         %>
         <table class="table table-striped table-hover">
             <thead>
@@ -123,12 +142,13 @@
                     <th>Monto a pagar</th>
                     <th>Cuotas</th>
                     <th>Cuotas pagas</th>
-                    <th>Fecha aprobación</th>
+                    <th>Fecha </th>
+                    <th>Estado</th>
                 </tr>
             </thead>
             <tbody>
                 <%
-                    for (Prestamo prestamo : prestamosActivos) {
+                    for (Prestamo prestamo : prestamos) {
                 %>
                 <tr>
                     <td><%= prestamo.getCliente().getNombre() + " " + prestamo.getCliente().getApellido()%></td>
@@ -138,6 +158,21 @@
                     <td><%= prestamo.getCuotas()%></td>
                     <td><%= prestamo.getCuotasPagas() %></td>
                     <td><%= prestamo.getFecha()  %></td>
+                    <td>
+                    <%
+                    	int estadoInt = prestamo.getEstado();
+                    	String estado = "";
+                    	String claseEstado = "";
+                    	if(estadoInt == 1){
+                    		estado = "En curso";
+                    		claseEstado = "estado-en-curso";
+                    	} else if (estadoInt == 3) {
+                    		estado = "Finalizado";
+                    		claseEstado = "estado-finalizado";
+                    	}
+                    %> 
+                    <span class="status <%=claseEstado%>"><%=estado%></span>
+                    </td>
                 </tr>
                 <%
                     }
@@ -157,7 +192,7 @@
 	            </div>
 	            <li class="page-item <%=paginaActual == 1 ? "disabled" : ""%>">
 	                <a class="page-link"
-	                   <%=paginaActual == 1 ? "" : "href='AdminPrestamosActivosSv?page=" + (paginaActual - 1) + "&pageSize=5'"%>>
+	                   <%=paginaActual == 1 ? "" : "href='AdminPrestamosSv?page=" + (paginaActual - 1) + "&pageSize=5'"%>>
 	                    Anterior 
 	                </a>
 	            </li>
@@ -173,7 +208,7 @@
 	                if (startPage > 1) {
 	            %>
 	            <li class="page-item">
-	                <a class="page-link" href="AdminPrestamosActivosSv?page=1&pageSize=5">1</a>
+	                <a class="page-link" href="AdminPrestamosSv?page=1&pageSize=5">1</a>
 	            </li>
 	            <li class="page-item disabled">
 	                <span class="page-link">...</span>
@@ -184,7 +219,7 @@
 	                for (int i = startPage; i <= endPage; i++) {
 	            %>
 	            <li class="page-item <%=i == paginaActual ? "active" : ""%>">
-	                <a class="page-link" href="AdminPrestamosActivosSv?page=<%=i%>&pageSize=5">
+	                <a class="page-link" href="AdminPrestamosSv?page=<%=i%>&pageSize=5">
 	                    <%=i%>
 	                </a>
 	            </li>
@@ -197,7 +232,7 @@
 	                <span class="page-link">...</span>
 	            </li>
 	            <li class="page-item">
-	                <a class="page-link" href="AdminPrestamosActivosSv?page=<%=totalPaginas%>&pageSize=5">
+	                <a class="page-link" href="AdminPrestamosSv?page=<%=totalPaginas%>&pageSize=5">
 	                    <%=totalPaginas%>
 	                </a>
 	            </li>
@@ -207,7 +242,7 @@
 	
 	            <li class="page-item <%=paginaActual == totalPaginas ? "disabled" : ""%>">
 	                <a class="page-link"
-	                   <%=paginaActual == totalPaginas ? "" : "href='AdminPrestamosActivosSv?page=" + (paginaActual + 1) + "&pageSize=5'"%>>
+	                   <%=paginaActual == totalPaginas ? "" : "href='AdminPrestamosSv?page=" + (paginaActual + 1) + "&pageSize=5'"%>>
 	                    Siguiente 
 	                </a>
 	            </li>
@@ -219,7 +254,7 @@
         <%
             } else {
         %>
-        <p class="text-center">No se registraron préstamos activos.</p>
+        <p class="text-center">No se registraron préstamos.</p>
         <%
             }
         %>

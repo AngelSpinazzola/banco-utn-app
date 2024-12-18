@@ -191,7 +191,7 @@
 							<input type="text" 
 							required id="calle" 
 							name="calle" 
-							pattern="^[a-zA-Z0-9]+( [a-zA-Z0-9]+)*$" 
+							pattern="^[a-zA-ZÁÉÍÓÚáéíóúÑñ0-9]+( [a-zA-ZÁÉÍÓÚáéíóúÑñ0-9]+)*$" 
 							class="form-control" 
 							maxlength="29"
 							title="La calle solo debe contener letras." 

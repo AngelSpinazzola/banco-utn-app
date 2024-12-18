@@ -170,7 +170,7 @@
 		display: block;
 	}
 	.titulo {
-		padding-top: 20px;
+		padding-top: 40px;
 	}
 </style>
 <%@ include file="Componentes/Head.jsp"%>
@@ -178,7 +178,7 @@
 <body>
 	<%@ include file="Componentes/NavbarAdmin.jsp"%>
 	<div class="container">
-		<h3 class="titulo">Gestión de clientes</h3>
+		<h4 class="titulo">Gestión de clientes</h4>
 		<div class="btn-nuevo-cliente-container">
 			<a href="AltaClienteSv">
 				<button class="btn-general btn-nuevo-cliente" style="margin-buttom: 10px !important;">Nuevo Cliente</button>
@@ -189,10 +189,10 @@
 				<thead>
 					<tr>
 						<th>DNI</th>
+						<th>Cuil</th>
 						<th>Nombre</th>
 						<th>Apellido</th>
 						<th>Cuentas</th>
-						<th>Estado</th>
 						<th>Acción</th>
 					</tr>
 				</thead>
@@ -205,13 +205,10 @@
 					%>
 					<tr>
 						<td><%=cliente.getDni()%></td>
+						<td><%=cliente.getCuil() %></td>
 						<td><%=cliente.getNombre()%></td>
 						<td><%=cliente.getApellido()%></td>
 						<td><%=cliente.getCantidadCuentas()%></td>
-						<td><%=cliente.isEstado() ? "Activo" : "Inactivo"%> <i
-							class="<%=cliente.isEstado() ? "fas fa-check-circle" : "fas fa-times-circle"%>"
-							style="color: <%=cliente.isEstado() ? "#28a745" : "#dc3545"%>;"></i>
-						</td>
 						<td>
 							<div class="action-buttons">
 								<button>
@@ -273,7 +270,7 @@
 							for (int i = startPage; i <= endPage; i++) {
 					%>
 					<li class="page-item <%=i == paginaActual ? "active" : ""%>"><a
-						class="page-link" href="ListarClientesSv?page=<%=i%>&pageSize=5">
+						class="page-link" href="ListarClientesSv?page=<%=i%>&pageSize=6">
 							<%=i%>
 					</a></li>
 					<%
@@ -338,7 +335,8 @@
 		
 		    const mensajeExito = '<%=session.getAttribute("mensajeExito") != null ? session.getAttribute("mensajeExito") : ""%>';
 		    const mensajeError = '<%=session.getAttribute("mensajeError") != null ? session.getAttribute("mensajeError") : ""%>';
-		
+		    const mensajeCuentasActivas = '<%=session.getAttribute("mensajeCuentasActivas") != null ? session.getAttribute("mensajeCuentasActivas") : ""%>';
+		    
 		    if (mensajeExito) {
 		        Swal.fire({
 		            icon: 'success',
@@ -357,6 +355,16 @@
 		            confirmButtonText: 'Aceptar'
 		        });
 		        <%session.removeAttribute("mensajeError");%>
+		    }
+		    
+		    if (mensajeCuentasActivas) {
+		        Swal.fire({
+		            icon: 'warning',
+		            title: 'El cliente tiene cuentas activas.',
+		            text: mensajeCuentasActivas,
+		            confirmButtonText: 'Entendido'
+		        });
+		        <%session.removeAttribute("mensajeCuentasActivas");%>
 		    }
 		});
 	</script>

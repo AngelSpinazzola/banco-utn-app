@@ -28,11 +28,10 @@
 <body>
    <jsp:include page="Componentes/Navbar.jsp"></jsp:include>
    
-   <div class="container d-flex flex-column justify-content-center align-items-center vh-100">
+   <div class="container d-flex flex-column justify-content-center align-items-center vh-100" style="margin-top: -70px;">
         <div class="transfer-confirmation text-center">
             <h2 class="mb-4 text-primary">Revisá si está todo bien</h2>
             <p class="lead mb-4">Detalles de la transferencia:</p>
-            
             <div class="detail-list">
                 <ul class="list-unstyled">
                     <li class="mb-2">

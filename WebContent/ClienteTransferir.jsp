@@ -90,7 +90,7 @@
         }
 
         .btn-transferir {
-            background-color: var(--primary-color);
+            background-color: #198754;
             color: white;
             border: none;
             padding: 10px 20px;
@@ -101,9 +101,8 @@
         }
 
         .btn-transferir:hover {
-            background-color: var(--secondary-color);
+            background-color: #157347;
         }
-
         .btn-volver:hover {
             background-color: #d0d0d0;
         }
@@ -190,14 +189,13 @@
                             <input type="text" class="form-input" placeholder="$0.00" name="monto">
 
                             <div class="button-container">
-                                <a href="ClientePanelSv" class="btn-volver">Volver</a>
-                                <button type="submit" class="btn-transferir">Transferir</button>
+                                <a href="ClientePanelSv" class="btn-secondary btn-volver">Volver</a>
+                                <button type="submit" class="btn-primary btn-transferir">Transferir</button>
                             </div>
                         </div>
                     </div>
                 </div>
             <% } %>
-        </div>
     </form>
 
     <!-- Script para manejar los mensajes de SweetAlert -->
