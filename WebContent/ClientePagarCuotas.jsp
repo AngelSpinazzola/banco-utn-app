@@ -72,11 +72,11 @@
 					<div class="d-flex justify-content-between align-items-start mb-4">
 						<div>
 							<p class="mb-1">
-								<strong class="highlight-bold oscuro-texto">Tipo de
-									Préstamo:</strong> Personal
+								<strong class="highlight-bold oscuro-texto">Aboná tus cuotas</strong> 
 							</p>
 						</div>
 						<div>
+							<!-- 
 							<p class="mb-1">
 								<strong class="highlight-bold oscuro-texto">Cuotas
 									Totales:</strong> 15
@@ -85,6 +85,7 @@
 								<strong class="highlight-bold oscuro-texto">Cuotas
 									Pagadas:</strong> 10
 							</p>
+							 -->
 						</div>
 					</div>
 

@@ -2,6 +2,16 @@
     pageEncoding="UTF-8"%>
 <%@ include file="Componentes/Head.jsp"%>
 <head>
+<style>
+	.btn-customContinuar{
+		background-color: #157347;
+	
+	}
+	.btn-customContinuar:hover{
+		background-color: #105c2e;
+		color: white;
+	}
+</style>
 </head>
 <body>
     <%@ include file="Componentes/Navbar.jsp"%>
