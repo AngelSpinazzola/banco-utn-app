@@ -2,6 +2,7 @@ package negocio;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 import entidad.DatosDashboard;
 import entidad.Movimiento;
@@ -15,4 +16,6 @@ public interface IMovimientoNegocio {
 	// Métodos para reportes 
 	public int getCantidadTransferenciasPorAnio(int anio);
 	public BigDecimal getMontoTransferenciasPorAnio(int anio);
+	public List<BigDecimal> getTransferenciasMensualesPorAnio(int anio);
+	public List<Integer> getAniosConTransferencias();
 }

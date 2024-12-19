@@ -38,6 +38,15 @@ public class ServletLogin extends HttpServlet {
 			request.getRequestDispatcher("Login.jsp").forward(request, response);
 			return;
 		}
+		
+		
+		boolean usuarioInactivo = usuarioNegocioImpl.validarInactivo(usuarioLogin.getId());
+		
+		if(usuarioInactivo) {
+			request.setAttribute("error", "El usuario está inactivo.");
+			request.getRequestDispatcher("Login.jsp").forward(request, response);
+			return;
+		}
 
 		HttpSession session = request.getSession();
 		session.setAttribute("usuario", usuarioLogin);

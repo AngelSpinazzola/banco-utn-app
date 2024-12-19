@@ -55,5 +55,28 @@ public class UsuarioDaoImpl implements IUsuarioDao {
 
 		return usuario;
 	}
+	
+	@Override
+	public boolean validarInactivo(int idUsuario) {
+	    String query = "SELECT c.Estado as estado FROM clientes c WHERE IDUsuario = ?";
+	    boolean inactivo = false;
+	    
+	    try (Connection conexion = Conexion.getConnection();
+	         PreparedStatement statement = conexion.prepareStatement(query)) {
+	        
+	        statement.setInt(1, idUsuario);
+	        try (ResultSet rs = statement.executeQuery()) {
+	            if (rs.next()) {
+	                int estado = rs.getInt("estado"); 
+	                if (estado == 0) {
+	                    inactivo = true;
+	                }
+	            }
+	        }
+	    } catch (SQLException e) {
+	        System.err.println("Error al verificar el estado del usuario: " + e.getMessage());
+	    }
+	    return inactivo;
+	}
 
 }

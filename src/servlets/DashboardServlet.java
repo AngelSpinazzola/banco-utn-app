@@ -3,7 +3,11 @@ package servlets;
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.time.Year;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import javax.servlet.RequestDispatcher;
 import javax.servlet.ServletException;
@@ -48,33 +52,50 @@ public class DashboardServlet extends HttpServlet {
         request.setAttribute("totalCuentas", totalCuentas);
         request.setAttribute("totalPrestamosActivos", totalPrestamosActivos);
         
+
         
-        // Obtener año del parámetro (por defecto año actual si no se especifica)
-        int anio = Year.now().getValue();
-        String anioParam = request.getParameter("anio");
-        if (anioParam != null && !anioParam.isEmpty()) {
-            anio = Integer.parseInt(anioParam);
+        List<Integer> aniosPrestamos = iPrestamoNegocio.getAniosConPrestamos();
+        List<Integer> aniosTransferencias = iMovimientoNegocio.getAniosConTransferencias();
+        
+        // Combina los años sin duplicados
+        Set<Integer> todosLosAnios = new HashSet<>();
+        todosLosAnios.addAll(aniosPrestamos);
+        todosLosAnios.addAll(aniosTransferencias);
+        
+        // Convierte a lista y ordena descendentemente
+        List<Integer> aniosConDatos = new ArrayList<>(todosLosAnios);
+        Collections.sort(aniosConDatos, Collections.reverseOrder());
+        
+        // Si no hay años con datos, usa el año actual
+        int anioActual = Year.now().getValue();
+        if (aniosConDatos.isEmpty()) {
+            aniosConDatos.add(anioActual);
         }
-        	
-        int prestamosSolicitadosCantidad = iPrestamoNegocio.getCantidadPrestamosPorAnio(anio);
-        BigDecimal prestamosSolicitadosMonto = iPrestamoNegocio.getMontoPrestamosPorAnio(anio);
         
-        int transferenciasRealizadasCantidad = iMovimientoNegocio.getCantidadTransferenciasPorAnio(anio);
-        BigDecimal transferenciasRealizadasMonto = iMovimientoNegocio.getMontoTransferenciasPorAnio(anio);
+        // Obtiene el año seleccionado (por defecto el más reciente)
+        int anioSeleccionado = anioActual;
+        String anioParam = request.getParameter("anio");
+        try {
+            if (anioParam != null && !anioParam.isEmpty()) {
+                anioSeleccionado = Integer.parseInt(anioParam);
+            } else {
+                anioSeleccionado = aniosConDatos.get(0); // El año más reciente
+            }
+        } catch (NumberFormatException e) {
+            anioSeleccionado = aniosConDatos.get(0);
+        }
 
-        // Datos para gráfico de Clientes por Provincia
-        //String[] provincias = {"Buenos Aires", "Córdoba", "Santa Fe", "Mendoza"};
-        //Integer[] clientesPorProvincia = {50, 30, 20, 10};
-
-        // Establecer atributos para el JSP
-        request.setAttribute("prestamosSolicitadosCantidad", prestamosSolicitadosCantidad);
-        request.setAttribute("prestamosSolicitadosMonto", prestamosSolicitadosMonto);
-        request.setAttribute("transferenciasRealizadasCantidad", transferenciasRealizadasCantidad);
-        request.setAttribute("transferenciasRealizadasMonto", transferenciasRealizadasMonto);
+        request.setAttribute("aniosConDatos", aniosConDatos);
+        request.setAttribute("anioActual", anioSeleccionado);
         
-        //request.setAttribute("provincias", provincias);
-        //request.setAttribute("clientesPorProvincia", clientesPorProvincia);
-        request.setAttribute("anioActual", anio);
+        List<BigDecimal> prestamosMensuales = iPrestamoNegocio.getPrestamosMensualesPorAnio(anioSeleccionado);
+        List<BigDecimal> transferenciasMensuales = iMovimientoNegocio.getTransferenciasMensualesPorAnio(anioSeleccionado);
+        
+        BigDecimal[] prestamosArray = prestamosMensuales.toArray(new BigDecimal[0]);
+        BigDecimal[] transferenciasArray = transferenciasMensuales.toArray(new BigDecimal[0]);
+
+        request.setAttribute("prestamosArray", prestamosArray);
+        request.setAttribute("transferenciasArray", transferenciasArray);
         
         
         

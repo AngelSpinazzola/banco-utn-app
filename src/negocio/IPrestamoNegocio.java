@@ -2,6 +2,7 @@ package negocio;
 
 import java.math.BigDecimal;
 import java.util.ArrayList;
+import java.util.List;
 
 import entidad.Prestamo;
 
@@ -19,7 +20,6 @@ public interface IPrestamoNegocio {
 	public ArrayList<Prestamo> getPrestamos(int page, int pageSize);
 	public int getTotalPrestamosPorCliente(int idCliente);
 	public boolean pagarCuotasPrestamo(int idCuenta, String cuotasAPagar);
-	
 	public BigDecimal totalOtorgadoEnPrestamos();
 	public int getPrestamosCountPorCliente(int idCliente);
 	public int getPrestamosActivosCount();
@@ -27,4 +27,6 @@ public interface IPrestamoNegocio {
 	//Métodos para reportes
 	public int getCantidadPrestamosPorAnio(int anio);
 	public BigDecimal getMontoPrestamosPorAnio(int anio);
+	public List<BigDecimal> getPrestamosMensualesPorAnio(int anio);
+	public List<Integer> getAniosConPrestamos();
 }

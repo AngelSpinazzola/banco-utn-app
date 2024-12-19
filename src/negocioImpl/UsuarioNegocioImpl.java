@@ -20,4 +20,11 @@ public class UsuarioNegocioImpl implements IUsuarioNegocio {
 		return usuarioRegistrado;
 
 	}
+	
+	@Override
+	public boolean validarInactivo(int idUsuario) {
+		boolean inactivo = usuarioDaoImpl.validarInactivo(idUsuario);
+		
+		return inactivo;
+	}
 }

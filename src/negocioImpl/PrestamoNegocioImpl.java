@@ -5,6 +5,8 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.util.ArrayList;
+import java.util.List;
+
 import dao.IPrestamoDao;
 import daoImpl.Conexion;
 import daoImpl.PrestamoDaoImpl;
@@ -196,6 +198,63 @@ public class PrestamoNegocioImpl implements IPrestamoNegocio{
 			e.printStackTrace();
 		}
 		return suma;
+	}
+	
+	@Override
+	public List<BigDecimal> getPrestamosMensualesPorAnio(int anio){
+		String query = "SELECT MONTH(Fecha) AS Mes, SUM(p.MontoPedido) AS TotalPrestamos\r\n" + 
+				"FROM PRESTAMOS p WHERE YEAR(Fecha) = ?\r\n" + 
+				"GROUP BY MONTH(Fecha)\r\n" + 
+				"ORDER BY Mes\r\n" + 
+				"";
+		
+		List<BigDecimal> prestamosMensuales = new ArrayList<>();
+	    
+	    try (Connection conn = Conexion.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(query)) {
+	        
+	        ps.setInt(1, anio);
+	        ResultSet rs = ps.executeQuery();
+	        
+	        for (int i = 0; i < 12; i++) {
+	            prestamosMensuales.add(BigDecimal.ZERO);
+	        }
+	        
+	        while (rs.next()) {
+	            int mes = rs.getInt("Mes");
+	            BigDecimal totalPrestamos = rs.getBigDecimal("TotalPrestamos");
+	            
+	            prestamosMensuales.set(mes - 1, totalPrestamos != null ? totalPrestamos : BigDecimal.ZERO);
+	        }
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return prestamosMensuales;
+	}
+	
+	public List<Integer> getAniosConPrestamos() {
+		String query = "SELECT DISTINCT YEAR(p.Fecha) FROM Prestamos p ORDER BY YEAR(p.Fecha) DESC";
+		
+		List<Integer> aniosConPrestamos = new ArrayList<>();
+
+	    try (Connection conn = Conexion.getConnection();
+	         PreparedStatement ps = conn.prepareStatement(query)) {
+	        
+	        ResultSet rs = ps.executeQuery();
+	        
+	        while (rs.next()) {
+	            int anio = rs.getInt(1); 
+	            aniosConPrestamos.add(anio);
+	        }
+	        
+	    } catch (Exception e) {
+	        e.printStackTrace();
+	    }
+	    
+	    return aniosConPrestamos;
+		
 	}
 
 
