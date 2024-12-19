@@ -239,6 +239,29 @@ body {
 	font-size: 1rem;
 	margin-right: auto;
 }
+.filtros-container {
+    background-color: #f8f9fa;
+    padding: 20px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+}
+
+.filtros-container .form-group {
+    margin-bottom: 15px;
+}
+
+.filtros-container label {
+    font-weight: 500;
+    margin-bottom: 5px;
+}
+
+.filtros-container .btn {
+    min-width: 120px;
+}
+
+.btn-secondary {
+    margin-left: 10px;
+}
 </style>
 </head>
 <body>
@@ -291,7 +314,39 @@ body {
 				}
 			%>
 		</div>
-
+		
+		
+		<div class="filtros-container mb-4">
+		    <div class="row">
+		        <div class="col-md-4">
+		            <div class="form-group">
+		                <label for="searchTerm">Búsqueda general:</label>
+		                <input type="text" class="form-control" id="searchTerm" name="searchTerm" 
+		                    placeholder="Buscar en movimientos..." value="${param.searchTerm}">
+		            </div>
+		        </div>
+		        <div class="col-md-4">
+		            <div class="form-group">
+		                <label for="montoDesde">Monto desde:</label>
+		                <input type="number" class="form-control" id="montoDesde" name="montoDesde" 
+		                    step="0.01" value="${param.montoDesde}">
+		            </div>
+		        </div>
+		        <div class="col-md-4">
+		            <div class="form-group">
+		                <label for="montoHasta">Monto hasta:</label>
+		                <input type="number" class="form-control" id="montoHasta" name="montoHasta" 
+		                    step="0.01" value="${param.montoHasta}">
+		            </div>
+		        </div>
+		    </div>
+		    <div class="row mt-3">
+		        <div class="col-12">
+		            <button type="submit" class="btn btn-primary">Aplicar filtros</button>
+		            <a href="ClientePanelSv" class="btn btn-secondary ml-2">Limpiar filtros</a>
+		        </div>
+		    </div>
+		</div>
 		<!-- Tabla de últimos movimientos -->
 		<div>
 			<h5>Resumen de movimientos</h5>

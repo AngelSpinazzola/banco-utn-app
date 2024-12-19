@@ -35,9 +35,6 @@
                         <div class="d-grid mb-3">
                             <button type="submit" class="btn btn-customContinuar">Iniciar Sesión</button>
                         </div>
-                        <div class="d-flex justify-content-between">
-                            <a href="Home.jsp">Cancelar</a>
-                        </div>
                     </div>
                 </div>
             </form>

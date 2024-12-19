@@ -31,60 +31,82 @@ public class ClientePanelSv extends HttpServlet {
         super();
     }
 
-	protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
-		Cliente cliente = iClienteNegocio.getClientePorIdUsuario(usuario.getId());
-		ArrayList<Cuenta> cuentas = iCuentaNegocio.getCuentasDelCliente(cliente.getIdCliente());
-		
-		String pageParam = request.getParameter("page");
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        processRequest(request, response);
+    }
+
+    private void processRequest(HttpServletRequest request, HttpServletResponse response) 
+            throws ServletException, IOException {
+        Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
+        Cliente cliente = iClienteNegocio.getClientePorIdUsuario(usuario.getId());
+        ArrayList<Cuenta> cuentas = iCuentaNegocio.getCuentasDelCliente(cliente.getIdCliente());
+
+        // Parámetros de paginación
+        String pageParam = request.getParameter("page");
         String pageSizeParam = request.getParameter("pageSize");
-        
         int page = (pageParam != null && !pageParam.isEmpty()) ? Integer.parseInt(pageParam) : 1;
         int pageSize = (pageSizeParam != null && !pageSizeParam.isEmpty()) ? Integer.parseInt(pageSizeParam) : 5;
+
+        // Obtiene parámetros de filtrado
+        String searchTerm = request.getParameter("searchTerm");
+        String montoDesdeStr = request.getParameter("montoDesde");
+        String montoHastaStr = request.getParameter("montoHasta");
+
+        // Convierte montos a Double
+        Double montoDesde = null;
+        Double montoHasta = null;
+        try {
+            if (montoDesdeStr != null && !montoDesdeStr.isEmpty()) {
+                montoDesde = Double.parseDouble(montoDesdeStr);
+            }
+            if (montoHastaStr != null && !montoHastaStr.isEmpty()) {
+                montoHasta = Double.parseDouble(montoHastaStr);
+            }
+        } catch (NumberFormatException e) {
+            System.out.println("Error al parsear los montos: " + e.getMessage());
+        }
+
+        // Obtiene movimientos filtrados
+        ArrayList<Movimiento> movimientos = iMovimientoNegocio.getMovimientosFiltrados(
+            cliente.getIdCliente(),
+            searchTerm,
+            montoDesde,
+            montoHasta,
+            page,
+            pageSize
+        );
+
+        int totalMovimientos = iMovimientoNegocio.getTotalMovimientosFiltrados(
+            cliente.getIdCliente(),
+            searchTerm,
+            montoDesde,
+            montoHasta
+        );
         
-        ArrayList<Movimiento> movimientos = iMovimientoNegocio.getMovimientosPorCliente(cliente.getIdCliente(), page, pageSize);
-		
-        int totalMovimientos = iMovimientoNegocio.getTotalMovimientos(cliente.getIdCliente());
         int totalPaginas = (int) Math.ceil((double) totalMovimientos / pageSize);
-       
-		request.setAttribute("cliente", cliente);
-		request.setAttribute("cuentas", cuentas);
-		request.setAttribute("movimientos", movimientos);
-	    request.setAttribute("totalMovimientos", totalMovimientos);
-	    request.setAttribute("totalPaginas", totalPaginas);
+
+        request.setAttribute("cliente", cliente);
+        request.setAttribute("cuentas", cuentas);
+        request.setAttribute("movimientos", movimientos);
+        request.setAttribute("totalMovimientos", totalMovimientos);
+        request.setAttribute("totalPaginas", totalPaginas);
         request.setAttribute("paginaActual", page);
-		
-		RequestDispatcher dispatcher = request.getRequestDispatcher("/ClientePanel.jsp");
-	    dispatcher.forward(request, response);
-	}
 
+        // Mantener los valores de filtro en el request para mostrarlos en el formulario
+        request.setAttribute("searchTerm", searchTerm);
+        request.setAttribute("montoDesde", montoDesdeStr);
+        request.setAttribute("montoHasta", montoHastaStr);
 
-	protected void doPost(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
-		Usuario usuario = (Usuario) request.getSession().getAttribute("usuario");
-		Cliente cliente = iClienteNegocio.getClientePorIdUsuario(usuario.getId());
-		ArrayList<Cuenta> cuentas = iCuentaNegocio.getCuentasDelCliente(cliente.getIdCliente());
-		
-		String pageParam = request.getParameter("page");
-        String pageSizeParam = request.getParameter("pageSize");
-        
-        int page = (pageParam != null && !pageParam.isEmpty()) ? Integer.parseInt(pageParam) : 1;
-        int pageSize = (pageSizeParam != null && !pageSizeParam.isEmpty()) ? Integer.parseInt(pageSizeParam) : 6;
-        
-        ArrayList<Movimiento> movimientos = iMovimientoNegocio.getMovimientosPorCliente(cliente.getIdCliente(), page, pageSize);
-		
-        int totalMovimientos = iMovimientoNegocio.getTotalMovimientos(cliente.getIdCliente());
-        int totalPaginas = (int) Math.ceil((double) totalMovimientos / pageSize);
-       
-        System.out.println("total movimientos en do post: " + totalMovimientos);
-		request.setAttribute("cliente", cliente);
-		request.setAttribute("cuentas", cuentas);
-		request.setAttribute("movimientos", movimientos);
-	    request.setAttribute("totalMovimientos", totalMovimientos);
-	    request.setAttribute("totalPaginas", totalPaginas);
-        request.setAttribute("paginaActual", page);
-		
-		RequestDispatcher dispatcher = request.getRequestDispatcher("/ClientePanel.jsp");
-	    dispatcher.forward(request, response);
-	}
-
+        RequestDispatcher dispatcher = request.getRequestDispatcher("/ClientePanel.jsp");
+        dispatcher.forward(request, response);
+    }
+	
+	
+	
 }

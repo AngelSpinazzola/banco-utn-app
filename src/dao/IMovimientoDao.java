@@ -7,6 +7,9 @@ import entidad.Movimiento;
 
 public interface IMovimientoDao {
 	public void registrarMovimiento(Movimiento movimiento);
-	public ArrayList<Movimiento> getMovimientosPorCliente(int idCliente, int page, int pageSize);
 	public int getTotalMovimientosPorCliente(int idCliente);
+	
+	//Filtrado
+	public ArrayList<Movimiento> getMovimientosFiltrados(int idCliente, String searchTerm, Double montoDesde, Double montoHasta, int page, int pageSize);
+	public int getTotalMovimientosFiltrados(int idCliente, String searchTerm, Double montoDesde, Double montoHasta);
 }

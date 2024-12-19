@@ -26,12 +26,13 @@ public class MovimientoNegocioImpl implements IMovimientoNegocio{
 		iMovimientoDao.registrarMovimiento(movimiento);
 	}
 	
+	/*
 	@Override
 	public ArrayList<Movimiento> getMovimientosPorCliente(int idCliente, int page, int pageSize) {
 		ArrayList<Movimiento> movimientos = iMovimientoDao.getMovimientosPorCliente(idCliente, page, pageSize);
-		
 		return movimientos;
 	}
+	*/
 	
 	@Override
 	public int getTotalMovimientos(int idCliente) {
@@ -142,5 +143,19 @@ public class MovimientoNegocioImpl implements IMovimientoNegocio{
 	    }
 	    
 	    return aniosConTransferencias;
+	}
+	
+	@Override
+	public ArrayList<Movimiento> getMovimientosFiltrados(int idCliente, String searchTerm, Double montoDesde, Double montoHasta, int page, int pageSize){
+		ArrayList<Movimiento> lista = iMovimientoDao.getMovimientosFiltrados(idCliente, searchTerm, montoDesde, montoHasta, page, pageSize);
+		
+		return lista;
+	}
+	
+	@Override
+	public int getTotalMovimientosFiltrados(int idCliente, String searchTerm, Double montoDesde, Double montoHasta) {
+		int totalMovimientosFiltrados = iMovimientoDao.getTotalMovimientosFiltrados(idCliente, searchTerm, montoDesde, montoHasta);
+		
+		return totalMovimientosFiltrados;
 	}
 }
